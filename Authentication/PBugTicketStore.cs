@@ -18,7 +18,6 @@ namespace PBug.Authentication
 
         public async Task RemoveAsync(string key)
         {
-            Console.WriteLine("remove " + key);
             using (var ctx = new PBugContext(dbOptions))
             {
                 Session s = await ctx.Sessions.FindAsync(Convert.FromBase64String(key));
@@ -32,7 +31,6 @@ namespace PBug.Authentication
 
         public async Task RenewAsync(string key, AuthenticationTicket ticket)
         {
-            Console.WriteLine("renew " + key);
             using (var ctx = new PBugContext(dbOptions))
             {
                 Session s = await ctx.Sessions.FindAsync(Convert.FromBase64String(key));
@@ -47,7 +45,6 @@ namespace PBug.Authentication
 
         public async Task<AuthenticationTicket> RetrieveAsync(string key)
         {
-            Console.WriteLine("retrieve " + key);
             using (var ctx = new PBugContext(dbOptions))
             {
                 Session s = await ctx.Sessions.FindAsync(Convert.FromBase64String(key));
@@ -70,7 +67,6 @@ namespace PBug.Authentication
                     Expires = ticket.Properties.ExpiresUtc
                 })).Entity;
                 await ctx.SaveChangesAsync();
-                Console.WriteLine("store " + Convert.ToBase64String(s.Id));
                 return Convert.ToBase64String(s.Id);
             }
         }
