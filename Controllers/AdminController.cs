@@ -23,6 +23,7 @@ namespace PBug.Controllers
             return View();
         }
 
+        [PBugPermission("admin.createproject")]
         [Route("/admin/createproject")]
         [HttpGet]
         public IActionResult CreateProject()
@@ -30,6 +31,7 @@ namespace PBug.Controllers
             return View();
         }
 
+        [PBugPermission("admin.createproject")]
         [Route("/admin/createproject")]
         [HttpPost]
         public async Task<IActionResult> CreateProject(string name, string shortprojectid)
@@ -54,6 +56,7 @@ namespace PBug.Controllers
             return RedirectToAction("Main", "Admin");
         }
 
+        [PBugPermission("admin.users")]
         [Route("/admin/viewusers")]
         public async Task<IActionResult> ViewUsers()
         {
@@ -66,6 +69,8 @@ namespace PBug.Controllers
                     .ToArrayAsync()
             });
         }
+
+        [PBugPermission("admin.setrole")]
         [HttpPost]
         [Route("/admin/setrole/{id?}")]
         public async Task<IActionResult> SetRole([FromRoute] uint id, uint roleid)

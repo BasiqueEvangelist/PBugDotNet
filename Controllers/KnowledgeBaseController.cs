@@ -4,6 +4,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using PBug.Authentication;
 using PBug.Data;
 using PBug.Models;
 using PBug.Utils;
@@ -25,6 +26,7 @@ namespace PBug.Controllers
         }
 
         [Route("/kb/search")]
+        [PBugPermission("kb.search")]
         public async Task<IActionResult> Search([FromQuery] string q)
         {
             if (q == null) q = "";
@@ -71,6 +73,7 @@ namespace PBug.Controllers
 
         [Route("/kb/create/{*path}")]
         [HttpGet]
+        [PBugPermission("kb.create")]
         public IActionResult Create(string path)
         {
             return View((object)path);
@@ -78,6 +81,7 @@ namespace PBug.Controllers
 
         [Route("/kb/create/{*path}")]
         [HttpPost]
+        [PBugPermission("kb.create")]
         public async Task<IActionResult> Create([FromRoute] string path, string name, string tags, string text, byte secrecy)
         {
             await Db.Infopages.AddAsync(new Infopage()
@@ -102,6 +106,7 @@ namespace PBug.Controllers
         }
 
         [Route("/kb/view/{*path}")]
+        [PBugPermission("kb.view")]
         public async Task<IActionResult> ViewPage([FromRoute] string path)
         {
             Infopage page = await Db.Infopages
@@ -118,6 +123,7 @@ namespace PBug.Controllers
 
         [Route("/kb/edit/{*path}")]
         [HttpGet]
+        [PBugPermission("kb.editpage")]
         public async Task<IActionResult> EditPage([FromRoute] string path)
         {
             return View(await Db.Infopages
@@ -126,6 +132,7 @@ namespace PBug.Controllers
 
         [Route("/kb/edit/{*path}")]
         [HttpPost]
+        [PBugPermission("kb.editpage")]
         public async Task<IActionResult> EditPage([FromRoute] string path, string newtitle, string newtags, string newtext, byte secrecy)
         {
             Infopage page = await Db.Infopages.SingleAsync(x => x.Path == path);
@@ -141,6 +148,7 @@ namespace PBug.Controllers
         }
 
         [Route("/kb/talk/{*path}")]
+        [PBugPermission("kb.talk")]
         public async Task<IActionResult> ViewTalk([FromRoute] string path)
         {
             return View(await Db.Infopages
@@ -150,6 +158,7 @@ namespace PBug.Controllers
 
         [Route("/kb/comment/{*path}")]
         [HttpPost]
+        [PBugPermission("kb.comment")]
         public async Task<IActionResult> Comment([FromRoute] string path, string text)
         {
             InfopageComment post = (await Db.InfopageComments.AddAsync(new InfopageComment()
@@ -167,6 +176,7 @@ namespace PBug.Controllers
 
         [Route("/kb/editcomment/{id}")]
         [HttpGet]
+        [PBugPermission("kb.editcomment")]
         public async Task<IActionResult> EditComment([FromRoute] uint id)
         {
             return View(await Db.InfopageComments
@@ -176,6 +186,7 @@ namespace PBug.Controllers
 
         [Route("/kb/editcomment/{id}")]
         [HttpPost]
+        [PBugPermission("kb.editcomment")]
         public async Task<IActionResult> EditComment([FromRoute] uint id, string newtext)
         {
             InfopageComment comment = await Db.InfopageComments
@@ -190,6 +201,7 @@ namespace PBug.Controllers
         }
 
         [Route("/kb/delete/{*path}")]
+        [PBugPermission("kb.deletepage")]
         public async Task<IActionResult> DeletePage([FromRoute] string path)
         {
             Infopage page = await Db.Infopages.SingleAsync(x => x.Path == path);

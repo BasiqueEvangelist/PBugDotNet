@@ -33,7 +33,13 @@ namespace PBug.Controllers
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
         [Route("/403")]
+        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error403()
+        {
+            return View();
+        }
+        [Route("/404")]
+        public IActionResult Error404()
         {
             return View();
         }

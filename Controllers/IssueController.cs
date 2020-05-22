@@ -127,6 +127,7 @@ namespace PBug.Controllers
 
         [Route("/issues/")]
         [Route("/issues/search/")]
+        [PBugPermission("issue.search")]
         public async Task<IActionResult> Search([FromQuery] string q = "watched:yes")
         {
             if (q == null) q = "";
@@ -209,6 +210,7 @@ namespace PBug.Controllers
         }
 
         [Route("/issues/create")]
+        [PBugPermission("issue.create")]
         [HttpGet]
         public async Task<IActionResult> Create()
         {
@@ -220,6 +222,7 @@ namespace PBug.Controllers
         }
 
         [Route("/issues/create")]
+        [PBugPermission("issue.create")]
         [HttpPost]
         public async Task<IActionResult> Create(string name, string tags, string firsttext, uint projectid, int assigneeid)
         {
@@ -276,6 +279,7 @@ namespace PBug.Controllers
         }
 
         [Route("/issues/{id?}")]
+        [PBugPermission("issue.view")]
         public async Task<IActionResult> ViewTalk([FromRoute] int id)
         {
             Issue i = await Db.Issues
@@ -294,6 +298,7 @@ namespace PBug.Controllers
         }
 
         [Route("/issues/{id?}/activity")]
+        [PBugPermission("issue.activity")]
         public async Task<IActionResult> ViewActivity([FromRoute] int id)
         {
             await Db.IssueActivities
@@ -321,6 +326,7 @@ namespace PBug.Controllers
         }
 
         [Route("/issues/{id?}/post")]
+        [PBugPermission("issue.post")]
         [HttpPost]
         public async Task<IActionResult> Post([FromRoute] uint id, string text)
         {
@@ -344,6 +350,7 @@ namespace PBug.Controllers
         }
 
         [Route("/issues/posts/{id?}/edit")]
+        [PBugPermission("issue.editpost")]
         [HttpGet]
         public async Task<IActionResult> EditPost([FromRoute] uint id)
         {
@@ -353,6 +360,7 @@ namespace PBug.Controllers
         }
 
         [Route("/issues/posts/{id?}/edit")]
+        [PBugPermission("issue.editpost")]
         [HttpPost]
         public async Task<IActionResult> EditPost([FromRoute] uint id, string newtext)
         {
@@ -377,6 +385,7 @@ namespace PBug.Controllers
         }
 
         [Route("/issues/{id?}/edit")]
+        [PBugPermission("issue.editissue")]
         [HttpGet]
         public async Task<IActionResult> EditIssue([FromRoute] uint id)
         {
@@ -391,6 +400,7 @@ namespace PBug.Controllers
         }
 
         [Route("/issues/{id?}/edit")]
+        [PBugPermission("issue.editissue")]
         [HttpPost]
         public async Task<IActionResult> EditIssue([FromRoute] uint id
             , string filesremoved
@@ -473,6 +483,7 @@ namespace PBug.Controllers
         }
 
         [Route("/issues/{id?}/watch")]
+        [PBugPermission("issue.watch")]
         [HttpPost]
         public async Task<IActionResult> ToggleWatch([FromRoute] uint id)
         {
@@ -495,6 +506,7 @@ namespace PBug.Controllers
         }
 
         [Route("/issues/posts/{id?}/delete")]
+        [PBugPermission("issue.deleteissue")]
         [HttpPost]
         public async Task<IActionResult> DeleteIssue([FromRoute] uint id)
         {
