@@ -1,0 +1,80 @@
+@Html.ValidationSummary(false, "", new {})
+
+<form asp-action="Register" asp-controller="Auth" asp-route-redirect="@ViewData["RedirectTo"]" class="register-grid" method="POST" type="application/x-www-form-urlencoded">
+    <img id="fnresult" class="icon valcol namerow">
+    <input type="text" class="h2 blueunderline fieldcol namerow" id="fntb" name="fullname" placeholder="Full name">
+    <div class="infocol namerow">
+        Used to sign your posts.
+        <br>
+        You can change it later.
+    </div>
+    <br>
+    <img id="uresult" class="icon valcol loginrow">
+    <input type="text" class="h2 blueunderline fieldcol loginrow" id="usernametb" name="username" placeholder="Username">
+    <div class="infocol loginrow">
+        Used for signing in and in the
+        <br>
+        address of your user page.
+    </div>
+    <br>
+    <img id="presult" class="icon valcol passrow">    
+    <input type="password" class="h2 blueunderline fieldcol passrow" id="ptb" name="password" placeholder="Password">
+    <div class="infocol passrow">
+        6 characters or more.
+        <br>
+        Passphrases welcome.
+    </div>
+    <br>
+    <input type="submit" class="h2 submitpost fieldcol buttonrow" value="Register" style="margin-top:10px; justify-self: center;">
+</form>
+
+@section Scripts
+{
+    <script>
+        $(function() {
+            var timer = 0;
+            $("#usernametb").keyup(function() {
+                clearTimeout(timer);
+                var v = $(this).val()
+                timer = setTimeout(function() {
+                    $.post(vroot+"checkusername", {username:v},function(res) {
+                        if (res === "Username available" && v !== "") {
+                            $("#uresult").attr("src",vroot+"static/tick.png");
+                        }
+                        else {
+                            $("#uresult").attr("src",vroot+"static/cross.png");
+                        }
+                    });
+                },500);
+            });
+            $("#utb").keyup();
+            $("#fntb").keyup(function() {
+                if ($(this).val() !== "") {
+                    $("#fnresult").attr("src",vroot+"static/tick.png");
+                }
+                else {
+                    $("#fnresult").attr("src",vroot+"static/cross.png");
+                }
+            });
+            $("#fntb").keyup();
+            $("#ptb").keyup(function() {
+                if ($(this).val().length >= 6) {
+                    $("#presult").attr("src",vroot+"static/tick.png");
+                }
+                else {
+                    $("#presult").attr("src",vroot+"static/cross.png");
+                }
+            });
+            $("#ptb").keyup();
+            $("form").submit(function() {
+                if ($("#uresult").attr("src") == vroot+"static/cross.png")
+                    return false;
+                if ($("#fnresult").attr("src") == vroot+"static/cross.png")
+                    return false;
+                if ($("#presult").attr("src") == vroot+"static/cross.png")
+                    return false;
+                return true;
+            });
+        });
+    </script>
+}

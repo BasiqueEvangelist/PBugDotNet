@@ -1,0 +1,14 @@
+@model IssuePost
+
+<form asp-controller="Issue" asp-action="EditPost" asp-route-id="@Model.Id" method="POST" enctype="multipart/form-data">
+    <div class="entry">
+        <div class="username">@(Model.Author == null ? "Anonymous" : Model.Author.FullName)</div>
+        <div class="date">@Model.DateOfCreation</div>
+        @if (@Model.DateOfEdit != null)
+        {
+            <div class="date">Edited on @Model.DateOfEdit</div>
+        }
+        <textarea name="newtext" class="submit-text">@Model.ContainedText</textarea>
+    </div>
+    <input type="submit" value="Repost" class="submitpost" style="float:right">
+</form>

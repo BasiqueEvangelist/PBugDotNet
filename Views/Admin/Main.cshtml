@@ -1,0 +1,20 @@
+@* ul.issues-list
+    if provePermission(req.user.permissions, "admin.createproject")
+        li
+            a(href=vroot+"admin/createproject") Create new project code
+    if provePermission(req.user.permissions, "users.list")
+        li
+            a(href=vroot+"admin/users") View all registered users
+    if provePermission(req.user.permissions, "users.invites")
+        li
+            a(href=vroot+"admin/invites") View unredeemed invites
+    if provePermission(req.user.permissions, "roles.list")
+        li
+            a(href=vroot+"admin/roles") View all roles *@
+
+<ul class="issues-list">
+    <li><a asp-controller="Admin" asp-action="CreateProject">Create new project code</a></li>
+    <li><a asp-controller="Admin" asp-action="ViewUsers">View all registered users</a></li>
+    <li><a asp-controller="Admin" asp-action="ViewInvites">View unredeemed invites</a></li>
+    <li><a asp-controller="Admin" asp-action="ViewRoles">View all roles</a></li>
+</ul>

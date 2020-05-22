@@ -1,0 +1,43 @@
+@model IssueCreateModel
+
+<form asp-controller="Issue" asp-action="Create" method="POST" enctype="multipart/form-data">
+    <input type="text" name="name" placeholder="Title" class="title-input" required>
+    <hr>
+    <input type="text" class="taglist" name="tags" id="taglist" onkeypress="return event.keyCode != 13;">
+    <br>
+    <textarea name="firsttext" class="submit-text" placeholder="Description" required></textarea>
+    <br>
+    <label for="projectchooser">Project: </label>
+    <select name="projectid" id="projectchooser" class="blueunderline" required>
+        @foreach (var project in @Model.AllProjects)
+        {
+            <option value="@(project.Id.ToString())">@project.Name</option>
+        }
+    </select>
+    <label for="assigneechooser">Assignee: </label>
+    <select name="assigneeid" id="assigneechooser" class="blueunderline">
+        <option value="-1">Unassign</option>
+        @foreach (var user in @Model.AllUsers)
+        {
+            <option value="@(user.Id)">@user.FullName</option>
+        }
+    </select>
+    <input type="file" name="file[]" multiple>
+    <br>
+    <input type="submit" value="Post" class="submitpost" style="float:right">
+</form>
+
+@section Stylesheets
+{
+    <link rel="stylesheet" href="~/css/jquery.tag-editor.css">
+}
+@section Scripts
+{
+    <script src="~/js/jquery.tag-editor.min.js"></script>
+    <script>
+        $("#taglist").tagEditor({placeholder:"Issue tags"});
+        $(document).on("keypress", ".tag-editor", function(event) {
+            return event.keyCode != 13;
+        });
+    </script>
+}

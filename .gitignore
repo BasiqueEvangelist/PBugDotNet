@@ -1,0 +1,6 @@
+**/obj
+**/bin
+files/
+.vscode
+appsettings*
+launchSettings.json

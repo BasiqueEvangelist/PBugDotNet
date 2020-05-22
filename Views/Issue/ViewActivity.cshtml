@@ -1,0 +1,54 @@
+@model IssueViewModel
+
+@section Stylesheets 
+{
+    @* FIXME: Somehow do highlighting. *@
+    @* <link rel="stylesheet" href="~/css/highlightstyles/default.css"> *@
+}
+
+<div class="issue-tag">
+    [@(Model.Issue.Project.ShortProjectId)-@(Model.Issue.Id.ToString().PadLeft(4, '0'))]
+    @{
+        string statusName = Enum.GetName(typeof(PBug.Data.IssueStatus), Model.Issue.Status);
+    }
+    (<span class="issue-@(statusName.ToLower())-marker">@statusName</span>)
+    <span class="assigneetext">@(Model.Issue.Assignee != null ? Model.Issue.Assignee.FullName : "No assignee")</span>
+    <span class="assigneetext" style="float:right">Author: @(Model.Issue.AuthorId == null ? "Anonymous" : Model.Issue.Author.FullName)</span>
+</div>
+<h2 class="issue-name">@Model.Issue.Name</h2>
+<hr>
+<div class="taglist">
+    @if (Model.Issue.Tags.Length > 1)
+    {
+        @foreach (var tag in Model.Issue.Tags.Split(",", StringSplitOptions.RemoveEmptyEntries))
+        {
+            <span class="tag">#@tag</span>
+        }
+    }
+</div>
+<div class="underpanel">
+    <a asp-controller="Issue" asp-action="EditIssue" asp-route-id="@Model.Issue.Id">edit</a>
+    <form asp-controller="Issue" asp-action="DeleteIssue" asp-route-id="@Model.Issue.Id" class="linkform">
+        <input type="submit" value="delete issue" class="buttonlink">
+    </form>
+    @if (!User.IsAnonymous())
+    {
+        <form asp-controller="Issue" asp-action="ToggleWatch" asp-route-id="@Model.Issue.Id" class="linkform">
+            <input type="submit" value="@(Model.IsWatching ? "unwatch" : "watch")" class="buttonlink">
+        </form>
+    }
+    <a asp-controller="Issue" asp-action="ViewTalk" asp-route-id="@Model.Issue.Id">discuss</a>
+    <br>
+</div>
+
+<ul class="postlist">
+    @foreach (var activity in Model.Issue.Activities)
+    {
+        <partial name="ActivityPartial" model="activity" /> 
+    }
+</ul>
+
+@section Scripts
+{
+    <script src="~/js/expandable.js"></script>
+}

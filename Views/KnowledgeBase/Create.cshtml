@@ -1,0 +1,29 @@
+@model string
+
+<div class="issue-tag">/@Model</div>
+<form asp-controller="KnowledgeBase" asp-action="Create" asp-route-path="@Model" method="POST" enctype="application/x-www-form-urlencoded">
+    <input type="text" class="title-input" name="name" placeholder="Title" required>
+    <hr>
+    <input type="text" class="taglist" name="tags" id="taglist" onkeypress="return event.keyCode != 13;">
+    <br>
+    <textarea name="text" required placeholder="Text" class="submit-text"></textarea>
+    <br>
+    <label for="secrecychooser">Secrecy: </label>
+    <input type="number" name="secrecy" min="0" max="255" id="secrecychooser" class="blueunderline">
+    <input type="submit" value="Post" class="submitpost" style="float:right">
+</form>
+
+@section Stylesheets
+{
+    <link rel="stylesheet" href="~/css/jquery.tag-editor.css">
+}
+@section Scripts
+{
+    <script src="~/js/jquery.tag-editor.min.js"></script>
+    <script>
+        $("#taglist").tagEditor({placeholder:"Issue tags"});
+        $(document).on("keypress", ".tag-editor", function(event) {
+            return event.keyCode != 13;
+        });
+    </script>
+}

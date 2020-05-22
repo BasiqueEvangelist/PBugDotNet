@@ -1,0 +1,181 @@
+@model IssueActivity
+
+@functions{
+    void DisplayDiff(List<DiffPlex.DiffBuilder.Model.DiffPiece> lines, bool isold) {
+        foreach (var row in lines)
+        {
+            if (!isold)
+                switch (row.Type)
+                {
+                    case DiffPlex.DiffBuilder.Model.ChangeType.Modified:
+                    case DiffPlex.DiffBuilder.Model.ChangeType.Inserted:
+                        <text><div class="smallmargin afteredit">@row.Text</div></text>
+                        break;
+                    case DiffPlex.DiffBuilder.Model.ChangeType.Deleted:
+                    case DiffPlex.DiffBuilder.Model.ChangeType.Imaginary:
+                        <text><div class="smallmargin filler"></div></text>
+                        break;
+                    case DiffPlex.DiffBuilder.Model.ChangeType.Unchanged:
+                        <text><div class="smallmargin">@row.Text</div></text>
+                        break;
+                    default:
+                        break;
+                }
+            else
+                switch (row.Type)
+                {
+                    case DiffPlex.DiffBuilder.Model.ChangeType.Modified:
+                    case DiffPlex.DiffBuilder.Model.ChangeType.Deleted:
+                        <text><div class="smallmargin beforeedit">@row.Text</div></text>
+                        break;
+                    case DiffPlex.DiffBuilder.Model.ChangeType.Inserted:
+                    case DiffPlex.DiffBuilder.Model.ChangeType.Imaginary:
+                        <text><div class="smallmargin filler"></div></text>
+                        break;
+                    case DiffPlex.DiffBuilder.Model.ChangeType.Unchanged:
+                        <text><div class="smallmargin">@row.Text</div></text>
+                        break;
+                    default:
+                        break;
+                }
+        }
+    }
+}
+
+<li class="entry">
+    <a>
+        <div class="from">
+            From
+            [@(Model.Issue.Project.ShortProjectId)-@(Model.Issue.Id.ToString().PadLeft(4, '0'))]
+            @{
+                string statusName = Enum.GetName(typeof(PBug.Data.IssueStatus), Model.Issue.Status);
+            }
+            (<span class="issue-@(statusName.ToLower())-marker">@statusName</span>)
+            <span class="issue">@Model.Issue.Name</span>
+        </div>
+    </a>
+    <div class="date">@Model.DateOfOccurance</div>
+    @(Model.Author == null ? "Anonymous" : Model.Author.FullName)
+
+    @if (Model is PostActivity pa)
+    {
+        <span class="showable-container">
+            <a href="javascript:void(0)" class="blue show-button underline">posted</a>
+            <div class="showable">
+                <div class="postborder">
+                    <pre><code class="smallmargin">@pa.ContainedText</code></pre>
+                </div>
+            </div>
+        </span>
+    }
+    else if (Model is CreateIssueActivity cia)
+    {
+        <span class="showable-container">
+            <a href="javascript:void(0)" class="blue show-button underline">has created issue with description</a>
+            <table class="showable hide" style="width:100%">
+                <tr>
+                    <td class="postborder">
+                        <pre><code class="smallmargin">@cia.Description</code></pre>
+                    </td>
+                </tr>
+            </table>
+            @if (!string.IsNullOrWhiteSpace(cia.Tags))
+            {
+                <span class="blue">and with tags</span>
+                <span class="taglist">
+                    @foreach (var tag in cia.Tags.Split(","))
+                    {
+                        @:#@tag
+                    }
+                </span>
+            }
+            <span class="blue">and with title</span>
+            @cia.Name
+        </span>
+    }
+    else if (Model is EditPostActivity epa)
+    {
+        var diff = DiffHelper.DiffText(epa.OldContainedText, epa.NewContainedText);
+
+        <span class="showable-container">
+            <a href="javascript:void(0)" class="blue show-button underline">has edited post</a>
+            <table class="showable hide" style="width:100%">
+                <tr>
+                    <td class="postborder fleft" style="width:48%">
+                        <pre><code>@{DisplayDiff(diff.OldText.Lines, true);}</code></pre>
+                    </td>
+                    <td class="postborder fright" style="width:48%">
+                        <pre><code>@{DisplayDiff(diff.NewText.Lines, false);}</code></pre>
+                    </td>
+                </tr>
+            </table>
+        </span>        
+    }
+    else if (Model is EditIssueActivity eia) {
+        <span class="showable-container">
+            @if (eia.OldDescription != eia.NewDescription) 
+            {
+                var diff = DiffHelper.DiffText(eia.OldDescription, eia.NewDescription);
+                <a href="javascript:void(0)" class="blue show-button underline">edited description</a>
+                <table class="showable hide" style="width:100%">
+                    <tr>
+                         <td class="postborder fleft" style="width:48%">
+                            <pre><code>@{DisplayDiff(diff.OldText.Lines, true);}</code></pre>
+                        </td>
+                        <td class="postborder fright" style="width:48%">
+                            <pre><code>@{DisplayDiff(diff.NewText.Lines, false);}</code></pre>
+                    </td>
+                    </tr>
+                </table>
+            }
+            @if (eia.OldTags != eia.NewTags)
+            {
+                <span class="blue">changed tags from (</span>
+                <span class="taglist">
+                    @foreach (var tag in eia.OldTags.Split(','))
+                    {
+                        <span class="tag">#@tag</span>
+                    }
+                </span>
+                <span class="blue">) to (</span>
+                <span class="taglist">
+                    @foreach (var tag in eia.NewTags.Split(','))
+                    {
+                        <span class="tag">#@tag</span>
+                    }
+                </span>
+                <span class="blue">)</span>
+            }
+            @if (eia.OldDescription != eia.NewDescription)
+            {
+                <span class="blue">changed title from</span>
+                @eia.OldDescription
+                <span class="blue">to</span>
+                @eia.NewDescription
+            }
+            @if (eia.OldAssigneeId != eia.NewAssigneeId)
+            {
+                if (eia.NewAssigneeId == null)
+                {
+                    <span class="blue">removed assignee</span>
+                }
+                else
+                {
+                    <span class="blue">assigned </span>
+                    @eia.NewAssignee.FullName
+                }
+            }
+            @if (eia.OldStatus != eia.NewStatus)
+            {
+                <span class="blue">changed status from</span>
+                @Enum.GetName(typeof(IssueStatus),eia.OldStatus)
+                <span class="blue">to</span>
+                @Enum.GetName(typeof(IssueStatus),eia.NewStatus)
+            }
+        </span>
+    }
+    else
+    {
+        @* @Json.Serialize(Model) *@
+    }
+</li>

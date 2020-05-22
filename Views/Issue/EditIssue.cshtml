@@ -1,0 +1,136 @@
+@model IssueEditIssueModel
+
+@*
+        label(for="projectchooser") Project:
+        select.blueunderline#projectchooser(name="newprojectid",required)
+            each project in projects
+                if issue.projectid == project.id
+                    option(value=project.id.toString() selected)= project.projectname
+                else
+                    option(value=project.id.toString())= project.projectname
+        |
+        label(for="assigneechooser") Assignee:
+        select.blueunderline#assigneechooser(name="newassigneeid")
+            option(value="-1") Unassign
+            each user in users
+                if issue.assigneeid == user.id
+                    option(value=user.id selected)=user.fullname
+                else
+                    option(value=user.id)=user.fullname
+        |
+        label(for="statuschooser") Status:
+        select.blueunderline#statuschooser(name="newstatus")
+            each status in Object.keys(statuses.statuses)
+                if issue.status === Number(status)
+                    option(value=statuses.statuses[status] selected)=statuses.descriptions[status]
+                else
+                    option(value=statuses.statuses[status])=statuses.descriptions[status]
+        br
+        each file in files
+            div.file
+                a.sendbutton(href="javascript:void(0)" data-uid=file.fileid) X
+                |
+                a.filename(href=vroot+"file/"+file.fileid)=file.filename
+        |
+        br
+        input(type="file" multiple name="file[]")
+        br
+        input.submitpost(type="submit",value="Repost",style="float:right") *@
+
+<form asp-controller="Issue" asp-action="EditIssue" asp-route-id="@Model.Issue.Id" method="POST" enctype="multipart/form-data">
+    <input type="hidden" name="filesremoved" value="[]" id="filesremoved">
+    <input type="text" name="newtitle" class="title-input" required value="@Model.Issue.Name">
+    <hr>
+    <input type="text" name="newtags" id="taglist" class="taglist" required value="@Model.Issue.Tags" onkeypress="return event.keyCode != 13;">
+    <br>
+    <textarea name="newtext" placeholder="Description" class="submit-text" required>@Model.Issue.Description</textarea>
+    <br>
+    <label for="projectchooser">Project: </label>
+    <select name="newprojectid" id="projectchooser" class="blueunderline" required>
+        @foreach (var project in Model.AllProjects)
+        {
+            @if (project.Id == Model.Issue.ProjectId)
+            {
+                <option value="@project.Id" selected>@project.Name (@project.ShortProjectId)</option>
+            }
+            else
+            {
+                <option value="@project.Id">@project.Name (@project.ShortProjectId)</option>
+            }
+        }
+    </select>
+    <label for="assigneechooser">Assignee: </label>
+    <select name="newassigneeid" id="assigneechooser" class="blueunderline" required>
+        <option value="-1">Unassign</option>
+        @foreach (var user in Model.AllUsers)
+        {
+            @if (user.Id == Model.Issue.AssigneeId)
+            {
+                <option value="@user.Id" selected>@user.Username</option>
+            }
+            else
+            {
+                <option value="@user.Id">@user.Username</option>
+            }
+        }
+    </select>
+    <label for="statuschooser">Status: </label>
+    <select name="newstatusid" id="statuschooser" class="blueunderline" required>
+        @foreach (var status in Enum.GetValues(typeof(IssueStatus)).Cast<IssueStatus>())
+        {
+            @if (status == Model.Issue.Status)
+            {
+                <option value="@status" selected>@Enum.GetName(typeof(IssueStatus), status)</option>
+            }
+            else
+            {
+                <option value="@status">@Enum.GetName(typeof(IssueStatus), status)</option>
+            }
+        }
+    </select>
+    <br>
+    @foreach (var file in Model.Issue.Files)
+    {
+        <div class="file">
+            <a href="javascript:void(0)" data-uid="@file.FileId" class="sendbutton">X</a>
+            <a asp-controller="File" asp-action="Download" asp-route-id="@file.FileId" class="filename">@file.FileName</a>
+        </div>
+    }
+    <br>
+    <input type="file" name="file[]" multiple>
+    <br>
+    <input type="submit" value="Repost" class="submitpost" style="float:right">
+</form>
+
+@section Stylesheets
+{
+    <link rel="stylesheet" href="~/css/jquery.tag-editor.css">
+}
+
+@section Scripts
+{
+    <script src="~/js/jquery.tag-editor.min.js"></script>
+    <script>
+        $("#taglist").tagEditor({placeholder:"Issue tags"});
+        $(document).on("keypress", ".tag-editor", function(event) {
+            return event.keyCode != 13;
+        });
+        function removefile(ev) {
+            var uid = $(ev).attr("data-uid");
+            var flist = JSON.parse($("#filesremoved").val());
+            flist.push(uid);
+            $("#filesremoved").val(JSON.stringify(flist));
+            $(ev).off("click").click(function() {unremovefile(this)});
+            $(ev).parent().children(".filename").addClass("strike");
+        }
+        function unremovefile(ev) {
+            var uid = $(ev).attr("data-uid");
+            var flist = JSON.parse($("#filesremoved").val());
+            flist.splice(flist.indexOf(uid),1);
+            $("#filesremoved").val(JSON.stringify(flist));
+            $(ev).off("click").click(function() {removefile(this)});
+            $(ev).parent().children(".filename").removeClass("strike");
+        }
+        $("a.sendbutton").click(function() {removefile(this)});
+    </script>
+}

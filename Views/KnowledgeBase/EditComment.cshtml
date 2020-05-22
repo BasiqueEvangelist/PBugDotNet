@@ -1,0 +1,16 @@
+@model InfopageComment
+
+<h2>Editing Comment</h2>
+
+<form asp-controller="KnowledgeBase" asp-action="EditComment" asp-route-id="@Model.Id" method="POST" enctype="application/x-www-form-urlencoded">
+    <div class="entry">
+        <div class="username">@(Model.Author == null ? "Anonymous" : Model.Author.FullName)</div>
+        <div class="date">@Model.DateOfCreation</div>
+        @if (Model.DateOfEdit != null)
+        {
+            <div class="date">Edited on @Model.DateOfEdit</div>
+        }
+        <textarea name="newtext" class="submit-text">@Model.ContainedText</textarea>
+    </div>
+    <input type="submit" value="Repost" class="submitpost" style="float:right">
+</form>

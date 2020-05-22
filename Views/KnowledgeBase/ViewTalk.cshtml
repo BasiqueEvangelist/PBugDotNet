@@ -1,0 +1,42 @@
+@model Infopage
+
+<div class="issue-tag">/@Model.Path</div>
+
+<h2 class="issue-name">@Model.Name</h2>
+<hr>
+<div class="underpanel">
+    <a asp-controller="KnowledgeBase" asp-action="ViewPage" asp-route-path="@Model.Path">view</a>
+    <a asp-controller="KnowledgeBase" asp-action="EditPage" asp-route-path="@Model.Path">edit</a>
+    <form asp-controller="KnowledgeBase" asp-action="DeletePage" asp-route-path="@Model.Path" class="linkform">
+        <input type="submit" value="delete" class="buttonlink">
+    </form>
+</div>
+
+<ul class="postlist">
+    @foreach (var comment in @Model.Comments)
+    {
+        <li class="entry" id="@comment.Id">
+            <div class="username">@(comment.Author == null ? "Anonymous" : comment.Author.FullName)</div>
+            <div class="date">@comment.DateOfCreation</div>
+            @if (comment.DateOfEdit != null)
+            {
+                <div class="date">Edited on @comment.DateOfEdit</div>
+            }
+            <div class="comment-underpanel">
+                <a asp-controller="KnowledgeBase" asp-action="EditComment" asp-route-id="@comment.Id">edit</a>
+                <a asp-controller="KnowledgeBase" asp-action="ViewTalk" asp-route-path="@Model.Path" asp-fragment="@comment.Id">link to comment</a>
+            </div>
+            @MarkdownHelper.ToHtml(comment.ContainedText)
+        </li>
+    }
+    <li class="entry">
+        <form asp-controller="KnowledgeBase" asp-action="Comment" asp-route-path="@Model.Path" method="POST" enctype="application/x-www-form-urlencoded">
+            <div class="username">@User.GetClaim(ClaimTypes.Name).Value</div>
+            <div class="date">@(DateTime.Now)</div>
+            <textarea name="text" placeholder="Comment contents (Markdown)" class="submit-text"></textarea>
+            <br>
+            <input type="submit" value="Post" class="submitpost" style="float:right">
+            <br>
+        </form>
+    </li>
+</ul>

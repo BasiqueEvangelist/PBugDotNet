@@ -1,0 +1,79 @@
+@model IssueViewModel
+
+@section Stylesheets 
+{
+    @* FIXME: Somehow do highlighting. *@
+    @* <link rel="stylesheet" href="~/css/highlightstyles/default.css"> *@
+}
+
+<div class="issue-tag">
+    [@(Model.Issue.Project.ShortProjectId)-@(Model.Issue.Id.ToString().PadLeft(4, '0'))]
+    @{
+        string statusName = Enum.GetName(typeof(PBug.Data.IssueStatus), Model.Issue.Status);
+    }
+    (<span class="issue-@(statusName.ToLower())-marker">@statusName</span>)
+    <span class="assigneetext">@(Model.Issue.Assignee != null ? Model.Issue.Assignee.FullName : "No assignee")</span>
+    <span class="assigneetext" style="float:right">Author: @(Model.Issue.AuthorId == null ? "Anonymous" : Model.Issue.Author.FullName)</span>
+</div>
+<h2 class="issue-name">@Model.Issue.Name</h2>
+<hr>
+<div class="taglist">
+    @if (Model.Issue.Tags.Length > 1)
+    {
+        @foreach (var tag in Model.Issue.Tags.Split(",", StringSplitOptions.RemoveEmptyEntries))
+        {
+            <span class="tag">#@tag</span>
+        }
+    }
+</div>
+<div class="underpanel">
+    <a asp-controller="Issue" asp-action="EditIssue" asp-route-id="@Model.Issue.Id">edit</a>
+    <form asp-controller="Issue" asp-action="DeleteIssue" asp-route-id="@Model.Issue.Id" class="linkform">
+        <input type="submit" value="delete issue" class="buttonlink">
+    </form>
+    @if (!User.IsAnonymous())
+    {
+        <form asp-controller="Issue" asp-action="ToggleWatch" asp-route-id="@Model.Issue.Id" class="linkform">
+            <input type="submit" value="@(Model.IsWatching ? "unwatch" : "watch")" class="buttonlink">
+        </form>
+    }
+    <a asp-controller="Issue" asp-action="ViewActivity" asp-route-id="@Model.Issue.Id">activity</a>
+    <br>
+</div>
+<p>@MarkdownHelper.ToHtml(Model.Issue.Description)</p>    
+<ul>
+    @foreach (var file in Model.Issue.Files)
+    {
+        <a asp-controller="File" asp-action="Download" asp-route-uid="@file.FileId">@file.FileName</a>
+        <br>
+    }
+</ul>
+
+<ul class="postlist">
+    @foreach (var post in Model.Issue.Posts)
+    {
+        <li class="entry" id=@post.Id>
+            <div class="username">@(post.Author == null ? "Anonymous" : post.Author.FullName)</div>
+            <div class="date">@post.DateOfCreation</div>
+            @if (post.DateOfEdit != null)
+            {
+                <div class="date">Edited on @post.DateOfEdit</div>
+            }
+            <div class="comment-underpanel">
+                <a asp-controller="Issue" asp-action="EditPost" asp-route-id="@post.Id">edit</a>
+                <a asp-controller="Issue" asp-action="ViewTalk" asp-route-id="@Model.Issue.Id" asp-fragment="@post.Id">link to post</a>
+            </div>
+            @MarkdownHelper.ToHtml(post.ContainedText)
+        </li>
+    }
+    <li class="entry">
+        <form asp-controller="Issue" asp-action="Post" asp-route-id="@Model.Issue.Id" method="POST" enctype="application/x-www-form-urlencoded">
+            <div class="username">@User.GetClaim(ClaimTypes.Name).Value</div>
+            <div class="date">@(DateTime.Now)</div>
+            <textarea name="text" placeholder="Post contents (Markdown)" class="submit-text"></textarea>
+            <br>
+            <input type="submit" value="Post" class="submitpost" style="float:right">
+            <br>
+        </form>
+    </li>
+</ul>

@@ -1,0 +1,29 @@
+@model Infopage
+
+<div class="issue-tag">@Model.Path</div>
+<form asp-controller="KnowledgeBase" asp-action="EditPage" method="POST" enctype="application/x-www-form-urlencoded">
+    <input type="text" name="newtitle" value="@Model.Name" class="h2 blueunderline issue-name" style="width:100%">
+    <input type="text" name="newtags" value="@Model.Tags" id="taglist" class="taglist">
+    <br>
+    <div class="entry">
+        <textarea name="newtext" class="submit-text">@Model.ContainedText</textarea>
+    </div>
+    <label for="secrecychooser">Secrecy: </label>
+    <input type="number" name="secrecy" min="0" max="255" id="secrecychooser" class="blueunderline" value="@Model.Secrecy">
+    <input type="submit" value="Repost" class="submitpost" style="float:right">
+</form>
+
+@section Stylesheets
+{
+    <link rel="stylesheet" href="~/css/jquery.tag-editor.css">
+}
+@section Scripts
+{
+    <script src="~/js/jquery.tag-editor.min.js"></script>
+    <script>
+        $("#taglist").tagEditor({placeholder:"Issue tags"});
+        $(document).on("keypress", ".tag-editor", function(event) {
+            return event.keyCode != 13;
+        });
+    </script>
+}

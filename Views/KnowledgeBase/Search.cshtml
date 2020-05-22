@@ -1,0 +1,56 @@
+@model KBSearchModel
+
+<div class="searchbox">
+    <form asp-controller="KnowledgeBase" asp-action="Search" method="GET">
+        <input type="text" id="searchbox" placeholder="Search..." name="q" value="@Model.SearchString" class="search">
+        <input type="submit" class="submit-search" value="Search" style="background: url(@Url.Content("~/img/magnifying_glass.png")) no-repeat">
+    </form>
+    <div class="links">
+        <a href="javascript:void(0)" onclick="addthing('order:asc', ['order:desc'])">⇧</a>
+        <a href="javascript:void(0)" onclick="addthing('order:desc', ['order:asc'])">⇩</a>
+    </div>
+</div>
+
+<ul class="issues-list">
+    @foreach (var infopage in @Model.FoundInfopages)
+    {
+        <li>
+             @* a(href=vroot+"kb/view/" + result.path)
+                        .issue-tag
+                            span.assigneetext="Author: " + (result.authorid === null ? "Anonymous" : result.authorname)
+                        = result.pagename *@
+
+            <a asp-controller="KnowledgeBase" asp-action="ViewPage" asp-route-path="@infopage.Path">
+                <div class="issuetag">
+                    <span class="assigneetext">Author: @(infopage.Author == null ? "Anonymous" : infopage.Author.FullName)</span>
+                    @infopage.Name
+                </div>
+            </a>
+        </li>
+    }
+</ul>
+
+@section Scripts
+{
+    <script>
+        function addthing(thing,repl) {
+            if ($("#searchbox").val().indexOf(thing) === -1) {
+                for (var i = 0; i < repl.length; i++) {
+                    if ($("#searchbox").val().indexOf(repl[i]) !== -1) {
+                        $("#searchbox").val($("#searchbox").val().replace(repl[i],thing));
+                        return;
+                    }
+                }
+                $("#searchbox").val($("#searchbox").val() + " " + thing);
+            }
+            else {
+                var data = $("#searchbox").val();
+                data = data
+                    .replace(" " + thing, "")
+                    .replace(thing + " ", "")
+                    .replace(thing, "");
+                $("#searchbox").val(data);
+            }
+        }
+    </script>
+}

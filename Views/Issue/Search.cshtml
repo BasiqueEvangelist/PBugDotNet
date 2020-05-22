@@ -1,0 +1,64 @@
+@model IssueSearchModel
+
+<div class="searchbox">
+    <form asp-controller="Issue" asp-action="Search" method="GET">
+        <input type="text" id="searchbox" placeholder="Search..." name="q" value="@Model.SearchString" class="search">
+        <input type="submit" class="submit-search" value="Search" style="background: url(@Url.Content("~/img/magnifying_glass.png")) no-repeat">
+    </form>
+    <div class="links">
+        <a href="javascript:void(0)" onclick="addthing('status:open', ['status:closed'])">open</a>
+        /
+        <a href="javascript:void(0)" onclick="addthing('status:closed', ['status:open'])">closed</a>
+         |  watched:
+        <a href="javascript:void(0)" onclick="addthing('watched:yes', ['watched:no'])">yes</a>
+        /
+        <a href="javascript:void(0)" onclick="addthing('watched:no', ['watched:yes'])">no</a>
+         | 
+        <a href="javascript:void(0)" onclick="addthing('order:asc', ['order:desc'])">⇧</a>
+        <a href="javascript:void(0)" onclick="addthing('order:desc', ['order:asc'])">⇩</a>
+    </div>
+</div>
+
+<ul class="issues-list">
+    @foreach (var issue in @Model.FoundIssues)
+    {
+        <li>
+            <a asp-controller="Issue" asp-action="ViewTalk" asp-route-id="@(issue.Id)">
+                <div class="issue-tag">
+                    [@(issue.Project.ShortProjectId)-@(issue.Id.ToString().PadLeft(4, '0'))]
+                    @{
+                        string statusName = Enum.GetName(typeof(PBug.Data.IssueStatus), issue.Status);
+                    }
+                    (<span class="issue-@(statusName.ToLower())-marker">@statusName</span>)
+                    <span class="assigneetext">@(issue.Assignee != null ? issue.Assignee.FullName : "No assignee")</span>
+                </div>
+                @issue.Name
+            </a>
+        </li>
+    }
+</ul>
+
+@section Scripts
+{
+    <script>
+        function addthing(thing,repl) {
+            if ($("#searchbox").val().indexOf(thing) === -1) {
+                for (var i = 0; i < repl.length; i++) {
+                    if ($("#searchbox").val().indexOf(repl[i]) !== -1) {
+                        $("#searchbox").val($("#searchbox").val().replace(repl[i],thing));
+                        return;
+                    }
+                }
+                $("#searchbox").val($("#searchbox").val() + " " + thing);
+            }
+            else {
+                var data = $("#searchbox").val();
+                data = data
+                    .replace(" " + thing, "")
+                    .replace(thing + " ", "")
+                    .replace(thing, "");
+                $("#searchbox").val(data);
+            }
+        }
+    </script>
+}

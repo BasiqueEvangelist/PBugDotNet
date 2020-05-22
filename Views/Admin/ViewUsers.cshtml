@@ -1,0 +1,27 @@
+@model ViewUsersModel
+
+<ul class="issues-list">
+    @foreach (var user in Model.Users)
+    {
+        <li>
+            @user.FullName (@user.Username) (
+            <form asp-controller="Admin" asp-action="SetRole" asp-route-id="@user.Id" method="POST" enctype="application/x-www-form-urlencoded" style="display:inline">
+                <select name="roleid" required class="blueunderline">
+                    @foreach (var role in Model.AllRoles)
+                    {
+                        if (role.Id == user.RoleId)
+                        {
+                            <option value="@role.Id" selected>@role.Name</option>
+                        }
+                        else
+                        {
+                            <option value="@role.Id">@role.Name</option>
+                        }
+                    }
+                </select>
+                <input type="submit">
+            </form>
+            )
+        </li>
+    }
+</ul>

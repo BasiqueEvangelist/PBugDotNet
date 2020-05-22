@@ -1,0 +1,23 @@
+@model Infopage
+
+<div class="issue-tag">/@Model.Path</div>
+<div class="issue-tag">
+    <div class="date">Authored by @(Model.Author == null ? "Anonymous" : Model.Author.FullName) on @Model.DateOfCreation</div>
+    <div class="date">Edited on @Model.DateOfEdit</div>
+</div>
+<h2 class="issue-name">@Model.Name</h2>
+<hr>
+<div class="underpanel">
+    <a asp-controller="KnowledgeBase" asp-action="ViewTalk" asp-route-path="@Model.Path">talk</a>
+    <a asp-controller="KnowledgeBase" asp-action="EditPage" asp-route-path="@Model.Path">edit</a>
+    <form asp-controller="KnowledgeBase" asp-action="DeletePage" asp-route-path="@Model.Path" class="linkform">
+        <input type="submit" value="delete" class="buttonlink">
+    </form>
+</div>
+<div class="taglist">
+    @foreach (var tag in Model.Tags.Split(','))
+    {
+        <span class="tag">#@tag</span>
+    }
+</div>
+<div class="entry">@MarkdownHelper.ToHtml(Model.ContainedText)</div>
