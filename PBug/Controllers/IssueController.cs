@@ -105,7 +105,7 @@ namespace PBug.Controllers
                     int userId = HttpContext.User.GetUserId();
                     bool watched = sub.Substring("watched:".Length) == "yes";
                     searchQuery = searchQuery.Where(x =>
-                        watched == (x.Issue.AssigneeId == userId || x.Issue.Watchers.Any(x => x.WatcherId == userId)));
+                        watched == (x.Issue.AssigneeId == userId || x.Issue.Watchers.Any(w => w.WatcherId == userId)));
                 }
                 else if (sub.StartsWith("order:"))
                 {
@@ -189,7 +189,7 @@ namespace PBug.Controllers
                     int userId = HttpContext.User.GetUserId();
                     bool watched = sub.Substring("watched:".Length) == "yes";
                     searchQuery = searchQuery.Where(x =>
-                        watched == (x.AssigneeId == userId || x.Watchers.Any(x => x.WatcherId == userId)));
+                        watched == (x.AssigneeId == userId || x.Watchers.Any(w => w.WatcherId == userId)));
                 }
                 else if (sub.StartsWith("order:"))
                 {
