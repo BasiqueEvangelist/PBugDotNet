@@ -68,46 +68,6 @@ namespace PBug
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            DbContextOptionsBuilder<PBugContext> dbOpts = new DbContextOptionsBuilder<PBugContext>().UseMySql(Configuration.GetConnectionString("Database"));
-
-            using (var ctx = new PBugContext(dbOpts.Options))
-            {
-                ILogger<Startup> logger = (ILogger<Startup>)app.ApplicationServices.GetRequiredService(typeof(ILogger<Startup>));
-                logger.LogInformation("Ensuring creation of DB");
-                ctx.Database.EnsureCreated();
-                if (!ctx.Users.Any())
-                {
-                    Role anonymous = new Role()
-                    {
-                        Name = "Anonymous",
-                        Permissions = ""
-                    };
-
-                    Role admin = new Role()
-                    {
-                        Name = "Administrator",
-                        Permissions = "**"
-                    };
-
-                    ctx.AddRange(anonymous, admin);
-
-
-                    User system = new User()
-                    {
-                        Role = admin,
-                        Username = "pbug",
-                        FullName = "PBug System"
-                    };
-                    string password = Convert.ToBase64String(AuthUtils.GetRandomData(64));
-                    system.PasswordSalt = AuthUtils.GetRandomData(64);
-                    system.PasswordHash = AuthUtils.GetHashFor(password, system.PasswordSalt);
-
-                    ctx.Add(system);
-                    ctx.SaveChanges();
-                    logger.LogInformation("Created system user with username `pbug` and password `{}`", password);
-                }
-            }
-
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -140,8 +100,10 @@ namespace PBug
             });
 
             app.UseRouting();
-
-            app.Use(new Func<RequestDelegate, RequestDelegate>(new PermissionLoadMiddleware(dbOpts.Options).Use));
+            {
+                var dbOpts = new DbContextOptionsBuilder<PBugContext>().UseMySql(Configuration.GetConnectionString("Database"));
+                app.Use(new Func<RequestDelegate, RequestDelegate>(new PermissionLoadMiddleware(dbOpts.Options).Use));
+            }
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
