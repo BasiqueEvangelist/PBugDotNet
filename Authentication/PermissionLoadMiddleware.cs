@@ -22,7 +22,10 @@ namespace PBug.Authentication
             {
                 Role role;
                 using (PBugContext db = new PBugContext(dbopts))
-                    role = await db.Users.Where(x => x.Id == ctx.User.GetUserId()).Select(x => x.Role).FirstAsync();
+                    if (ctx.User.IsAnonymous())
+                        role = await db.Roles.FindAsync(1u);
+                    else
+                        role = await db.Users.Where(x => x.Id == ctx.User.GetUserId()).Select(x => x.Role).FirstAsync();
                 ctx.Features.Set(new PermissionData()
                 {
                     PermissionText = role.Permissions,
