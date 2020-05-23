@@ -9,7 +9,19 @@
         <textarea name="newtext" class="submit-text">@Model.ContainedText</textarea>
     </div>
     <label for="secrecychooser">Secrecy: </label>
-    <input type="number" name="secrecy" min="0" max="255" id="secrecychooser" class="blueunderline" value="@Model.Secrecy">
+    <select name="secrecy" id="secrecychooser" class="blueunderline" required>
+        @for (int i = 0; i < 4; i++)
+            @if (Context.UserCan("kb.secrecy." + i.ToString()))
+                @if (Model.Secrecy == i)
+                {
+                    <option value="@i" selected>@Enum.GetName(typeof(KBSecrecy), (KBSecrecy)i)</option>
+                }
+                else 
+                {
+                    <option value="@i">@Enum.GetName(typeof(KBSecrecy), (KBSecrecy)i)</option>
+                }
+            
+    </select>
     <input type="submit" value="Repost" class="submitpost" style="float:right">
 </form>
 

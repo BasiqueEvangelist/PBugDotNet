@@ -25,4 +25,8 @@ namespace PBug.Data
         public virtual User Editor { get; set; }
         public virtual ICollection<InfopageComment> Comments { get; set; }
     }
+    public enum KBSecrecy
+    {
+        Public, Internal, Protected, Private
+    }
 }

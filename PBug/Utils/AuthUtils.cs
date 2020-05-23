@@ -2,6 +2,8 @@ using System.Linq;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using Microsoft.AspNetCore.Cryptography.KeyDerivation;
+using Microsoft.AspNetCore.Http;
+using PBug.Authentication;
 
 namespace PBug.Utils
 {
@@ -34,6 +36,10 @@ namespace PBug.Utils
         public static bool IsAnonymous(this ClaimsPrincipal principal)
         {
             return principal.HasClaim(x => x.Type == ClaimTypes.Anonymous);
+        }
+        public static bool UserCan(this HttpContext ctx, string permission)
+        {
+            return PermissionParser.ProvePermission(ctx.Features.Get<PermissionData>().PermissionText, permission);
         }
     }
 }

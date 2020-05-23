@@ -35,6 +35,15 @@ namespace PBug.Controllers
             IQueryable<Infopage> searchQuery = Db.Infopages
                 .Include(x => x.Author);
             bool orderAscending = true;
+            if (!HttpContext.UserCan("kb.secrecy.0"))
+                searchQuery = searchQuery.Where(x => x.Secrecy != 0);
+            if (!HttpContext.UserCan("kb.secrecy.1"))
+                searchQuery = searchQuery.Where(x => x.Secrecy != 1);
+            if (!HttpContext.UserCan("kb.secrecy.2"))
+                searchQuery = searchQuery.Where(x => x.Secrecy != 2);
+            if (!HttpContext.UserCan("kb.secrecy.3"))
+                searchQuery = searchQuery.Where(x => x.Secrecy != 3);
+
             foreach (string sub in q.Split(' ', StringSplitOptions.RemoveEmptyEntries))
             {
                 if (sub.StartsWith("#"))
@@ -84,6 +93,10 @@ namespace PBug.Controllers
         [PBugPermission("kb.create")]
         public async Task<IActionResult> Create([FromRoute] string path, string name, string tags, string text, byte secrecy)
         {
+            if (!HttpContext.UserCan("kb.secrecy." + secrecy.ToString()))
+                return Forbid();
+            if (secrecy > 3)
+                return Forbid();
             await Db.Infopages.AddAsync(new Infopage()
             {
                 AuthorId = HttpContext.User.IsAnonymous() ? null : new uint?((uint)HttpContext.User.GetUserId()),
@@ -114,9 +127,9 @@ namespace PBug.Controllers
                 .SingleOrDefaultAsync(x => x.Path == path);
 
             if (page == null)
-            {
                 return RedirectToAction("Create", new { path = path });
-            }
+            if (!HttpContext.UserCan("kb.secrecy." + page.Secrecy.ToString()))
+                return Forbid();
 
             return View(page);
         }
@@ -126,8 +139,10 @@ namespace PBug.Controllers
         [PBugPermission("kb.editpage")]
         public async Task<IActionResult> EditPage([FromRoute] string path)
         {
-            return View(await Db.Infopages
-                .SingleAsync());
+            var page = await Db.Infopages.SingleAsync();
+            if (!HttpContext.UserCan("kb.secrecy." + page.Secrecy.ToString()))
+                return Forbid();
+            return View(page);
         }
 
         [Route("/kb/edit/{*path}")]
@@ -136,6 +151,11 @@ namespace PBug.Controllers
         public async Task<IActionResult> EditPage([FromRoute] string path, string newtitle, string newtags, string newtext, byte secrecy)
         {
             Infopage page = await Db.Infopages.SingleAsync(x => x.Path == path);
+
+            if (!HttpContext.UserCan("kb.secrecy." + page.Secrecy.ToString()))
+                return Forbid();
+            if (secrecy > 3)
+                return Forbid();
 
             page.Name = newtitle;
             page.Tags = newtags;
@@ -151,9 +171,12 @@ namespace PBug.Controllers
         [PBugPermission("kb.talk")]
         public async Task<IActionResult> ViewTalk([FromRoute] string path)
         {
-            return View(await Db.Infopages
+            var page = await Db.Infopages
                 .Include(x => x.Comments)
-                .SingleAsync());
+                .SingleAsync();
+            if (!HttpContext.UserCan("kb.secrecy." + page.Secrecy.ToString()))
+                return Forbid();
+            return View(page);
         }
 
         [Route("/kb/comment/{*path}")]
@@ -161,6 +184,9 @@ namespace PBug.Controllers
         [PBugPermission("kb.comment")]
         public async Task<IActionResult> Comment([FromRoute] string path, string text)
         {
+            var page = await Db.Infopages.SingleAsync(x => x.Path == path);
+            if (!HttpContext.UserCan("kb.secrecy." + page.Secrecy.ToString()))
+                return Forbid();
             InfopageComment post = (await Db.InfopageComments.AddAsync(new InfopageComment()
             {
                 AuthorId = HttpContext.User.IsAnonymous() ? null : new uint?((uint)HttpContext.User.GetUserId()),
@@ -179,9 +205,15 @@ namespace PBug.Controllers
         [PBugPermission("kb.editcomment")]
         public async Task<IActionResult> EditComment([FromRoute] uint id)
         {
-            return View(await Db.InfopageComments
+            var comment = await Db.InfopageComments
                 .Include(x => x.Author)
-                .SingleAsync(x => x.Id == id));
+                .Include(x => x.Infopage)
+                .SingleAsync(x => x.Id == id);
+
+            if (!HttpContext.UserCan("kb.secrecy." + comment.Infopage.Secrecy.ToString()))
+                return Forbid();
+
+            return View();
         }
 
         [Route("/kb/editcomment/{id}")]
@@ -192,6 +224,9 @@ namespace PBug.Controllers
             InfopageComment comment = await Db.InfopageComments
                 .Include(x => x.Infopage)
                 .SingleAsync();
+
+            if (!HttpContext.UserCan("kb.secrecy." + comment.Infopage.Secrecy.ToString()))
+                return Forbid();
 
             comment.DateOfEdit = DateTime.UtcNow;
             comment.ContainedText = newtext;
@@ -205,6 +240,8 @@ namespace PBug.Controllers
         public async Task<IActionResult> DeletePage([FromRoute] string path)
         {
             Infopage page = await Db.Infopages.SingleAsync(x => x.Path == path);
+            if (!HttpContext.UserCan("kb.secrecy." + page.Secrecy.ToString()))
+                return Forbid();
             await Db.Database.ExecuteSqlInterpolatedAsync($"delete from infopagecomments where infopageid = {page.Id}");
 
             Db.Infopages.Remove(page);

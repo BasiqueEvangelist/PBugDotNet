@@ -9,7 +9,13 @@
     <textarea name="text" required placeholder="Text" class="submit-text"></textarea>
     <br>
     <label for="secrecychooser">Secrecy: </label>
-    <input type="number" name="secrecy" min="0" max="255" id="secrecychooser" class="blueunderline">
+    <select name="secrecy" id="secrecychooser" class="blueunderline" required>
+        @for (int i = 0; i < 4; i++)
+            @if (Context.UserCan("kb.secrecy." + i.ToString()))
+            {
+                <option value="@i">@Enum.GetName(typeof(KBSecrecy), (KBSecrecy)i)</option>
+            }
+    </select>
     <input type="submit" value="Post" class="submitpost" style="float:right">
 </form>
 
