@@ -1,5 +1,7 @@
+using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.EntityFrameworkCore;
 using PBug.Authentication;
 using PBug.Data;
@@ -34,23 +36,15 @@ namespace PBug.Controllers
         [PBugPermission("admin.createproject")]
         [Route("/admin/createproject")]
         [HttpPost]
-        public async Task<IActionResult> CreateProject(string name, string shortprojectid)
+        public async Task<IActionResult> CreateProject(CreateProjectRequest req)
         {
-            if (string.IsNullOrWhiteSpace(name))
-            {
-                ModelState.AddModelError("", "Invalid Name");
+            if (!ModelState.IsValid)
                 return View();
-            }
-            if (shortprojectid.Length > 3 || string.IsNullOrWhiteSpace(shortprojectid))
-            {
-                ModelState.AddModelError("", "Invalid ShortProjectId");
-                return View();
-            }
             await Db.Projects.AddAsync(new Project()
             {
                 AuthorId = HttpContext.User.GetUserId() == -1 ? null : new uint?((uint)HttpContext.User.GetUserId()),
-                Name = name,
-                ShortProjectId = shortprojectid
+                Name = req.Name,
+                ShortProjectId = req.ShortID
             });
             await Db.SaveChangesAsync();
             return RedirectToAction("Main", "Admin");
@@ -73,10 +67,12 @@ namespace PBug.Controllers
         [PBugPermission("admin.setrole")]
         [HttpPost]
         [Route("/admin/setrole/{id?}")]
-        public async Task<IActionResult> SetRole([FromRoute] uint id, uint roleid)
+        public async Task<IActionResult> SetRole(SetRoleRequest req)
         {
-            User u = await Db.Users.FindAsync(id);
-            u.RoleId = roleid;
+            if (!ModelState.IsValid)
+                return BadRequest();
+            User u = await Db.Users.FindAsync(req.UserID);
+            u.RoleId = req.RoleID;
             await Db.SaveChangesAsync();
             return RedirectToAction("ViewUsers");
         }

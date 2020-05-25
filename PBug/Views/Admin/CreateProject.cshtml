@@ -7,7 +7,7 @@
 
 @Html.ValidationSummary(false, "", new {})
 <form asp-controller="Admin" asp-action="CreateProject" method="POST" enctype="application/x-www-form-urlencoded">
-    <input type="text" name="name" placeholder="Name of project">
+    <input type="text" name="name" placeholder="Name of project" minlength="3" maxlength="100">
     <br>
     <input type="text" name="shortprojectid" placeholder="Short project id (3 chars)" maxlength="3" minlength="3">
     <br>
