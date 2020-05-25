@@ -62,8 +62,7 @@ namespace PBug
                 ;
 #endif
             services.AddDbContext<PBugContext>(options =>
-                options.UseMySql(Configuration.GetConnectionString("Database"))
-                       .EnableSensitiveDataLogging());
+                options.UseMySql(Configuration.GetConnectionString("Database")));
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
