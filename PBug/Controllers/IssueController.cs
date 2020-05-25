@@ -224,8 +224,10 @@ namespace PBug.Controllers
         [Route("/issues/create")]
         [PBugPermission("issue.create")]
         [HttpPost]
-        public async Task<IActionResult> Create(string name, string tags, string firsttext, uint projectid, int assigneeid)
+        public async Task<IActionResult> Create(CreateIssueRequest req)
         {
+            if (!ModelState.IsValid)
+                return View();
             if (HttpContext.Request.Form.Files.Sum(x => x.Length) >= 128 * 1024 * 1024)
             {
                 ModelState.AddModelError("", "File size too large.");
@@ -233,11 +235,11 @@ namespace PBug.Controllers
             }
             Issue i = (await Db.Issues.AddAsync(new Issue()
             {
-                Name = name,
-                Tags = tags,
-                Description = firsttext,
-                ProjectId = projectid,
-                AssigneeId = assigneeid == -1 ? null : new uint?((uint)assigneeid),
+                Name = req.Name,
+                Tags = req.Tags,
+                Description = req.Description,
+                ProjectId = req.ProjectID,
+                AssigneeId = req.AssigneeID == -1 ? null : new uint?((uint)req.AssigneeID),
                 AuthorId = HttpContext.User.IsAnonymous() ? null : new uint?((uint)HttpContext.User.GetUserId()),
                 DateOfCreation = DateTime.UtcNow,
                 Status = IssueStatus.Open
@@ -246,11 +248,11 @@ namespace PBug.Controllers
             await Db.IssueActivities.AddActivity(HttpContext, 0, new CreateIssueActivity()
             {
                 Issue = i,
-                Name = name,
-                Description = firsttext,
-                Tags = tags,
-                ProjectId = projectid,
-                AssigneeId = assigneeid == -1 ? null : new uint?((uint)assigneeid),
+                Name = req.Name,
+                Description = req.Description,
+                Tags = req.Tags,
+                ProjectId = req.ProjectID,
+                AssigneeId = req.AssigneeID == -1 ? null : new uint?((uint)req.AssigneeID),
             });
 
             List<(IssueFile, IFormFile)> toProcess = new List<(IssueFile, IFormFile)>();
@@ -328,19 +330,22 @@ namespace PBug.Controllers
         [Route("/issues/{id?}/post")]
         [PBugPermission("issue.post")]
         [HttpPost]
-        public async Task<IActionResult> Post([FromRoute] uint id, string text)
+        public async Task<IActionResult> Post([FromRoute] uint id, IssuePostRequest req)
         {
+            if (!ModelState.IsValid)
+                return BadRequest();
+
             IssuePost post = (await Db.IssuePosts.AddAsync(new IssuePost()
             {
                 AuthorId = HttpContext.User.IsAnonymous() ? null : new uint?((uint)HttpContext.User.GetUserId()),
                 IssueId = id,
-                ContainedText = text,
+                ContainedText = req.Text,
                 DateOfCreation = DateTime.UtcNow
             })).Entity;
 
             await Db.IssueActivities.AddActivity(HttpContext, id, new PostActivity()
             {
-                ContainedText = text,
+                ContainedText = req.Text,
                 Post = post
             });
 
@@ -362,21 +367,24 @@ namespace PBug.Controllers
         [Route("/issues/posts/{id?}/edit")]
         [PBugPermission("issue.editpost")]
         [HttpPost]
-        public async Task<IActionResult> EditPost([FromRoute] uint id, string newtext)
+        public async Task<IActionResult> EditPost([FromRoute] uint id, IssuePostRequest req)
         {
+            if (!ModelState.IsValid)
+                return BadRequest();
+
             IssuePost post = await Db.IssuePosts.FindAsync(id);
 
-            if (post.ContainedText != newtext)
+            if (post.ContainedText != req.Text)
             {
                 await Db.IssueActivities.AddActivity(HttpContext, id, new EditPostActivity()
                 {
                     OldContainedText = post.ContainedText,
-                    NewContainedText = newtext,
+                    NewContainedText = req.Text,
                     PostId = id
                 });
 
                 post.DateOfEdit = DateTime.UtcNow;
-                post.ContainedText = newtext;
+                post.ContainedText = req.Text;
 
                 await Db.SaveChangesAsync();
             }
@@ -402,50 +410,46 @@ namespace PBug.Controllers
         [Route("/issues/{id?}/edit")]
         [PBugPermission("issue.editissue")]
         [HttpPost]
-        public async Task<IActionResult> EditIssue([FromRoute] uint id
-            , string filesremoved
-            , string newtitle
-            , string newtags
-            , string newtext
-            , uint newprojectid
-            , int newassigneeid
-            , IssueStatus newstatusid)
+        public async Task<IActionResult> EditIssue([FromRoute] uint id, EditIssueRequest req)
         {
+            if (!ModelState.IsValid)
+                return View();
+
             Issue i = await Db.Issues.FindAsync(id);
 
-            string[] filesremovedproc = JsonSerializer.Deserialize<string[]>(filesremoved);
+            string[] filesremovedproc = JsonSerializer.Deserialize<string[]>(req.RemovedFiles);
 
             if (filesremovedproc.Length > 0
-            || newtitle != i.Name
-            || newtags != i.Tags
-            || newtext != i.Description
-            || newprojectid != i.ProjectId
-            || newassigneeid != i.AssigneeId
-            || newstatusid != i.Status
+            || req.NewName != i.Name
+            || req.NewTags != i.Tags
+            || req.NewDescription != i.Description
+            || req.NewProjectID != i.ProjectId
+            || req.NewAssigneeID != i.AssigneeId
+            || req.NewStatus != i.Status
             || HttpContext.Request.Form.Files.Count > 0)
             {
                 await Db.IssueActivities.AddActivity(HttpContext, id, new EditIssueActivity()
                 {
                     OldName = i.Name,
-                    NewName = newtitle,
+                    NewName = req.NewName,
                     OldTags = i.Tags,
-                    NewTags = newtags,
+                    NewTags = req.NewTags,
                     OldDescription = i.Description,
-                    NewDescription = newtext,
+                    NewDescription = req.NewDescription,
                     OldProjectId = i.ProjectId,
-                    NewProjectId = newprojectid,
+                    NewProjectId = req.NewProjectID,
                     OldAssigneeId = i.AssigneeId,
-                    NewAssigneeId = newassigneeid == -1 ? null : new uint?((uint)newassigneeid),
+                    NewAssigneeId = req.NewAssigneeID == -1 ? null : new uint?((uint)req.NewAssigneeID),
                     OldStatus = i.Status,
-                    NewStatus = newstatusid
+                    NewStatus = req.NewStatus
                 });
 
-                i.Name = newtitle;
-                i.Tags = newtags;
-                i.Description = newtext;
-                i.ProjectId = newprojectid;
-                i.AssigneeId = newassigneeid == -1 ? null : new uint?((uint)newassigneeid);
-                i.Status = newstatusid;
+                i.Name = req.NewName;
+                i.Tags = req.NewTags;
+                i.Description = req.NewDescription;
+                i.ProjectId = req.NewProjectID;
+                i.AssigneeId = req.NewAssigneeID == -1 ? null : new uint?((uint)req.NewAssigneeID);
+                i.Status = req.NewStatus;
 
                 foreach (string uid in filesremovedproc)
                 {
