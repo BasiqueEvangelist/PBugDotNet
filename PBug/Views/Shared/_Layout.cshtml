@@ -13,14 +13,32 @@
         <div class="inner-element">
             <div class="helper">
                 <nav>
-                    <a asp-action="News" asp-controller="Issue">
+                    @if (Context.UserCan("issue.news"))
+                    {
+                        <a asp-action="News" asp-controller="Issue">
+                            <div class="helper">
+                                <img src="~/img/PB.svg" alt="PBug" class="logo" width="32" height="32">
+                            </div>
+                        </a>
+                    }
+                    else
+                    {
                         <div class="helper">
                             <img src="~/img/PB.svg" alt="PBug" class="logo" width="32" height="32">
                         </div>
-                    </a>
-                    <a asp-action="Search" asp-controller="Issue">Issues</a>
-                    <a asp-action="Create" asp-controller="Issue">New Issue</a>
-                    <a asp-action="Main" asp-controller="KnowledgeBase">Knowledge Base</a>
+                    }
+                    @if (Context.UserCan("issue.search"))
+                    {
+                        <a asp-action="Search" asp-controller="Issue">Issues</a>
+                    }
+                    @if (Context.UserCan("issue.search"))
+                    {
+                        <a asp-action="Create" asp-controller="Issue">New Issue</a>
+                    }
+                    @if (Context.UserCan("issue.search"))
+                    {
+                        <a asp-action="Main" asp-controller="KnowledgeBase">Knowledge Base</a>
+                    }
                     @if (User.IsAnonymous())
                     {
                         <a asp-action="Login" asp-controller="Auth">Login</a>
