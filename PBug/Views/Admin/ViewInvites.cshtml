@@ -1,0 +1,27 @@
+@model ViewInvitesModel
+
+<form asp-controller="Admin" asp-action="CreateInvite" method="POST" enctype="application/x-www-form-urlencoded">
+    <label for="roleselector">Role: </label>
+    <select name="roleid" required id="roleselector">
+        @foreach (var role in Model.Roles)
+        {
+            <option value="@role.Id">@role.Name</option>
+        }
+    </select>
+    <input type="submit" value="Create invite" class="h2 submitpost" style="margin-top:10px; width:initial">
+</form>
+<br>
+<hr>
+<h3>Unredeemed invites</h3>
+<ul class="issues-list">
+    @foreach (var invite in Model.Invites)
+    {
+        <li>
+            <span style="font-family:monospace">@invite.Uid.Substring(0, 16) (@invite.Role.Name)</span>
+            <form asp-controller="Admin" asp-action="DeleteInvite" asp-route-id="@invite.Id" method="POST" style="display:inline">
+                <input type="submit" value="❌" style="display:inline; color:red;" class="buttonlink">
+            </form>
+            <a asp-controller="Auth" asp-action="Register" asp-route-invite="@invite.Uid" class="copier" style="display:inline; color:blue">📤</a>
+        </li>
+    }
+</ul>

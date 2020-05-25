@@ -23,4 +23,19 @@ namespace PBug.Controllers
         [BindProperty(Name = "roleid"), BindRequired]
         public uint RoleID { get; set; }
     }
+
+    public class CreateInviteRequest
+    {
+        [BindProperty(Name = "roleid"), BindRequired]
+        public uint RoleID { get; set; }
+    }
+    public class CreateRoleRequest
+    {
+        [BindProperty(Name = "name"), BindRequired]
+        [StringLength(100)]
+        public string Name { get; set; }
+
+        [BindProperty(Name = "permissions"), BindRequired]
+        public string Permissions { get; set; }
+    }
 }

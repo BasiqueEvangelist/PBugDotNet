@@ -1,3 +1,4 @@
+using System;
 using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
@@ -75,6 +76,81 @@ namespace PBug.Controllers
             u.RoleId = req.RoleID;
             await Db.SaveChangesAsync();
             return RedirectToAction("ViewUsers");
+        }
+        [PBugPermission("admin.viewinvites")]
+        [Route("/admin/invites")]
+        public async Task<IActionResult> ViewInvites()
+        {
+            return View(new ViewInvitesModel()
+            {
+                Invites = await Db.Invites
+                    .Include(x => x.Role)
+                    .ToArrayAsync(),
+                Roles = await Db.Roles.ToArrayAsync()
+            });
+        }
+        [PBugPermission("admin.createinvite")]
+        [Route("/admin/invites/create")]
+        [HttpPost]
+        public async Task<IActionResult> CreateInvite(CreateInviteRequest req)
+        {
+            await Db.Invites.AddAsync(new Invite()
+            {
+                RoleId = req.RoleID,
+                Uid = Convert.ToBase64String(AuthUtils.GetRandomData(48))
+                    .Replace('/', '_')
+                    .Replace('+', '-')
+            });
+            await Db.SaveChangesAsync();
+            return RedirectToAction("ViewInvites");
+        }
+        [PBugPermission("admin.viewroles")]
+        [Route("/admin/roles")]
+        public async Task<IActionResult> ViewRoles()
+        {
+            return View(await Db.Roles.ToArrayAsync());
+        }
+
+        [PBugPermission("admin.createrole")]
+        [Route("/admin/roles/create")]
+        [HttpPost]
+        public async Task<IActionResult> CreateRole(CreateRoleRequest req)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest();
+            await Db.Roles.AddAsync(new Role()
+            {
+                Name = req.Name,
+                Permissions = req.Permissions
+            });
+            await Db.SaveChangesAsync();
+            return RedirectToAction("ViewRoles");
+        }
+
+        [PBugPermission("admin.deleterole")]
+        [Route("/admin/roles/delete/{id?}")]
+        [HttpPost]
+        public async Task<IActionResult> DeleteRole(uint id)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest();
+            Role r = await Db.Roles.FindAsync(id);
+            Db.Remove(r);
+            await Db.SaveChangesAsync();
+            return RedirectToAction("ViewRoles");
+        }
+
+        [PBugPermission("admin.deleteinvite")]
+        [Route("/admin/invites/delete/{id?}")]
+        [HttpPost]
+        public async Task<IActionResult> DeleteInvite(uint id)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest();
+            Invite inv = await Db.Invites.FindAsync(id);
+            Db.Remove(inv);
+            await Db.SaveChangesAsync();
+            return RedirectToAction("ViewInvites");
         }
     }
 }

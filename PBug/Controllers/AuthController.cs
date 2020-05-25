@@ -107,7 +107,7 @@ namespace PBug.Controllers
 
         [Route("/register/")]
         [HttpPost]
-        public async Task<IActionResult> Register([FromBody] RegisterRequest req, [FromQuery] string redirect = "")
+        public async Task<IActionResult> Register(RegisterRequest req, [FromQuery] string redirect = "")
         {
             if (!ModelState.IsValid)
                 return View();
@@ -125,15 +125,18 @@ namespace PBug.Controllers
                 ModelState.AddModelError("", "User already exists");
                 return View();
             }
+            Invite inv = await Db.Invites
+                .SingleAsync(x => x.Uid == req.InviteID);
             User newUser = new User()
             {
-                RoleId = 1, // Anonymous role
+                RoleId = inv.RoleId, // Anonymous role
                 Username = req.Username,
                 FullName = req.FullName,
                 PasswordSalt = AuthUtils.GetRandomData(64)
             };
             newUser.PasswordHash = AuthUtils.GetHashFor(req.Password, newUser.PasswordSalt);
             await Db.AddAsync(newUser);
+            Db.Remove(inv);
             await Db.SaveChangesAsync();
 
             var userIdentity = new ClaimsIdentity(CookieAuthenticationDefaults.AuthenticationScheme);
@@ -152,7 +155,7 @@ namespace PBug.Controllers
             }
             catch (ArgumentException)
             {
-                return RedirectToAction("News", "Main");
+                return RedirectToAction("News", "Issue");
             }
         }
 

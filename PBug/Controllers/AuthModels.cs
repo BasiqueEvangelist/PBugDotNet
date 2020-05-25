@@ -15,8 +15,11 @@ namespace PBug.Controllers
 
     public class RegisterRequest
     {
+        [BindProperty(Name = "inviteid"), BindRequired]
+        public string InviteID { get; set; }
+
         [BindProperty(Name = "fullname"), BindRequired]
-        [StringLength(maximumLength: 100, MinimumLength = 10)]
+        [StringLength(maximumLength: 100, MinimumLength = 6)]
         public string FullName { get; set; }
 
         [BindProperty(Name = "username"), BindRequired]
@@ -24,7 +27,7 @@ namespace PBug.Controllers
         public string Username { get; set; }
 
         [BindProperty(Name = "password"), BindRequired]
-        [StringLength(maximumLength: int.MaxValue, MinimumLength = 8)]
+        [StringLength(maximumLength: int.MaxValue, MinimumLength = 6)]
         public string Password { get; set; }
     }
 }
