@@ -80,6 +80,8 @@ namespace PBug
             app.UseHttpsRedirection();
             app.UseStaticFiles();
 
+            app.UseStatusCodePagesWithReExecute("/{0}");
+
             app.UseAuthentication();
 
             app.Use(async (ctx, next) =>
