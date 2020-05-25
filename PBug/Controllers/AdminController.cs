@@ -127,6 +127,19 @@ namespace PBug.Controllers
             return RedirectToAction("ViewRoles");
         }
 
+        [PBugPermission("admin.editrole")]
+        [Route("/admin/roles/edit/{id?}")]
+        [HttpPost]
+        public async Task<IActionResult> EditRole([FromRoute] uint id, EditRoleRequest req)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest();
+            Role r = await Db.Roles.FindAsync(id);
+            r.Permissions = req.Permissions;
+            await Db.SaveChangesAsync();
+            return RedirectToAction("ViewRoles");
+        }
+
         [PBugPermission("admin.deleterole")]
         [Route("/admin/roles/delete/{id?}")]
         [HttpPost]

@@ -12,7 +12,7 @@
     @foreach (var role in Model)
     {
         <li>
-            <form asp-controller="Admin" asp-action="EditRole" asp-route-id="@role.Id" style="display:inline">
+            <form asp-controller="Admin" asp-action="EditRole" asp-route-id="@role.Id" method="POST" style="display:inline">
                 @role.Name
                 
                 <input type="text" name="permissions" value="@role.Permissions">
