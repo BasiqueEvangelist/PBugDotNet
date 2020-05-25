@@ -46,8 +46,10 @@ namespace PBug.Controllers
 
         [Route("/login/")]
         [HttpPost]
-        public async Task<IActionResult> Login(string username, string password, [FromQuery] string redirect = "")
+        public async Task<IActionResult> Login(LoginRequest req, [FromQuery] string redirect = "")
         {
+            if (!ModelState.IsValid)
+                return View();
             try
             {
                 ViewData["RedirectTo"] = new PathString(redirect);
@@ -57,13 +59,13 @@ namespace PBug.Controllers
                 ViewData["RedirectTo"] = new PathString("");
             }
             var user = await Db.Users
-                .SingleOrDefaultAsync(x => x.Username == username);
+                .SingleOrDefaultAsync(x => x.Username == req.Username);
             if (user == null)
             {
                 ModelState.AddModelError("", "User not found");
                 return View();
             }
-            byte[] newHash = AuthUtils.GetHashFor(password, user.PasswordSalt);
+            byte[] newHash = AuthUtils.GetHashFor(req.Password, user.PasswordSalt);
             if (!Enumerable.SequenceEqual(newHash, user.PasswordHash))
             {
                 ModelState.AddModelError("", "Incorrect password");
@@ -105,8 +107,10 @@ namespace PBug.Controllers
 
         [Route("/register/")]
         [HttpPost]
-        public async Task<IActionResult> Register(string fullname, string username, string password, [FromQuery] string redirect = "")
+        public async Task<IActionResult> Register([FromBody] RegisterRequest req, [FromQuery] string redirect = "")
         {
+            if (!ModelState.IsValid)
+                return View();
             try
             {
                 ViewData["RedirectTo"] = new PathString(redirect);
@@ -115,7 +119,7 @@ namespace PBug.Controllers
             {
                 ViewData["RedirectTo"] = new PathString("");
             }
-            var user = await Db.Users.SingleOrDefaultAsync(x => x.Username == username && x.FullName == fullname);
+            var user = await Db.Users.SingleOrDefaultAsync(x => x.Username == req.Username && x.FullName == req.FullName);
             if (user != null)
             {
                 ModelState.AddModelError("", "User already exists");
@@ -124,11 +128,11 @@ namespace PBug.Controllers
             User newUser = new User()
             {
                 RoleId = 1, // Anonymous role
-                Username = username,
-                FullName = fullname,
+                Username = req.Username,
+                FullName = req.FullName,
                 PasswordSalt = AuthUtils.GetRandomData(64)
             };
-            newUser.PasswordHash = AuthUtils.GetHashFor(password, newUser.PasswordSalt);
+            newUser.PasswordHash = AuthUtils.GetHashFor(req.Password, newUser.PasswordSalt);
             await Db.AddAsync(newUser);
             await Db.SaveChangesAsync();
 
