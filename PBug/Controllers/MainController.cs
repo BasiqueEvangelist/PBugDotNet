@@ -43,5 +43,10 @@ namespace PBug.Controllers
         {
             return View();
         }
+        [Route("/400")]
+        public IActionResult Error400()
+        {
+            return View();
+        }
     }
 }
