@@ -1,4 +1,3 @@
-using DiffPlex;
 using DiffPlex.DiffBuilder.Model;
 using DiffPlex.DiffBuilder;
 

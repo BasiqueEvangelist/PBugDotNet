@@ -1,6 +1,4 @@
-using System;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace PBug.Authentication
 {

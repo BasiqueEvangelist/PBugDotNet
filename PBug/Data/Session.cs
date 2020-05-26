@@ -1,4 +1,5 @@
 using System;
+
 namespace PBug.Data
 {
     public class Session

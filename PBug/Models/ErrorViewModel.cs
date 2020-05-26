@@ -1,5 +1,3 @@
-using System;
-
 namespace PBug.Models
 {
     public class ErrorViewModel

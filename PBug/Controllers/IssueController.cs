@@ -1,7 +1,6 @@
 using System.IO;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
-using System.Security.Claims;
 using System.Linq;
 using System;
 using System.Threading.Tasks;
@@ -12,7 +11,6 @@ using PBug.Authentication;
 using Microsoft.EntityFrameworkCore;
 using PBug.Utils;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
 using System.Text.Json;
 
 namespace PBug.Controllers

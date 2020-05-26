@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace PBug.Data
+﻿namespace PBug.Data
 {
     public partial class IssueFile
     {

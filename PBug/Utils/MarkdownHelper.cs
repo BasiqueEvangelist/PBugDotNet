@@ -1,5 +1,4 @@
 using Markdig;
-using Markdig.Extensions.AutoIdentifiers;
 using Microsoft.AspNetCore.Html;
 
 namespace PBug.Utils
