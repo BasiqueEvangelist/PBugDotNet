@@ -330,7 +330,7 @@ namespace PBug.Controllers
         [Route("/issues/{id?}/post")]
         [PBugPermission("issue.post")]
         [HttpPost]
-        public async Task<IActionResult> Post([FromRoute] uint id, IssuePostRequest req)
+        public async Task<IActionResult> Post([FromRoute] uint id, CommentPostRequest req)
         {
             if (!ModelState.IsValid)
                 return BadRequest();
@@ -367,7 +367,7 @@ namespace PBug.Controllers
         [Route("/issues/posts/{id?}/edit")]
         [PBugPermission("issue.editpost")]
         [HttpPost]
-        public async Task<IActionResult> EditPost([FromRoute] uint id, IssuePostRequest req)
+        public async Task<IActionResult> EditPost([FromRoute] uint id, CommentPostRequest req)
         {
             if (!ModelState.IsValid)
                 return BadRequest();

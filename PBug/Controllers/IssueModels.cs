@@ -26,7 +26,7 @@ namespace PBug.Controllers
         [BindProperty(Name = "assigneeid"), BindRequired]
         public int AssigneeID { get; set; }
     }
-    public class IssuePostRequest
+    public class CommentPostRequest
     {
         [BindProperty(Name = "text"), BindRequired]
         [Required(AllowEmptyStrings = false)]

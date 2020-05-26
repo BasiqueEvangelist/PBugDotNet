@@ -2,11 +2,11 @@
 
 <div class="issue-tag">@Model.Path</div>
 <form asp-controller="KnowledgeBase" asp-action="EditPage" method="POST" enctype="application/x-www-form-urlencoded">
-    <input type="text" name="newtitle" value="@Model.Name" class="h2 blueunderline issue-name" style="width:100%">
-    <input type="text" name="newtags" value="@Model.Tags" id="taglist" class="taglist">
+    <input type="text" name="name" value="@Model.Name" class="h2 blueunderline issue-name" style="width:100%">
+    <input type="text" name="tags" value="@Model.Tags" id="taglist" class="taglist">
     <br>
     <div class="entry">
-        <textarea name="newtext" class="submit-text">@Model.ContainedText</textarea>
+        <textarea name="text" class="submit-text">@Model.ContainedText</textarea>
     </div>
     <label for="secrecychooser">Secrecy: </label>
     <select name="secrecy" id="secrecychooser" class="blueunderline" required>
