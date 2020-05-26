@@ -265,6 +265,8 @@ namespace PBug.Controllers
                         Issue = i,
                         FileName = file.FileName,
                         FileId = Convert.ToBase64String(AuthUtils.GetRandomData(12))
+                            .Replace('/', '_')
+                            .Replace('+', '-')
                     })).Entity,
                     file));
             }
@@ -470,6 +472,8 @@ namespace PBug.Controllers
                             Issue = i,
                             FileName = file.FileName,
                             FileId = Convert.ToBase64String(AuthUtils.GetRandomData(12))
+                                .Replace('/', '_')
+                                .Replace('+', '-')
                         })).Entity,
                         file));
                 }
