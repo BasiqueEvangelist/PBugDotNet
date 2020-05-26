@@ -1,6 +1,7 @@
 using System.IO;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using PBug.Authentication;
 using PBug.Data;
 
@@ -22,7 +23,7 @@ namespace PBug.Controllers
             if (Path.GetFileName(uid) != uid)
                 // Something's fishy...
                 return Forbid();
-            IssueFile ifi = await db.IssueFiles.FindAsync(uid);
+            IssueFile ifi = await db.IssueFiles.SingleAsync(x => x.FileId == uid);
             return File(System.IO.File.OpenRead(Path.Combine("files", uid)), "application/octet-stream", ifi.FileName);
         }
     }
