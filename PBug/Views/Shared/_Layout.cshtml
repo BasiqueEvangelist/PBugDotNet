@@ -31,11 +31,11 @@
                     {
                         <a asp-action="Search" asp-controller="Issue">Issues</a>
                     }
-                    @if (Context.UserCan("issue.search"))
+                    @if (Context.UserCan("issue.create"))
                     {
                         <a asp-action="Create" asp-controller="Issue">New Issue</a>
                     }
-                    @if (Context.UserCan("issue.search"))
+                    @if (Context.UserCan("kb.search"))
                     {
                         <a asp-action="Main" asp-controller="KnowledgeBase">Knowledge Base</a>
                     }

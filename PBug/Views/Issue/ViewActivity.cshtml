@@ -27,17 +27,26 @@
     }
 </div>
 <div class="underpanel">
-    <a asp-controller="Issue" asp-action="EditIssue" asp-route-id="@Model.Issue.Id">edit</a>
-    <form asp-controller="Issue" asp-action="DeleteIssue" asp-route-id="@Model.Issue.Id" class="linkform">
-        <input type="submit" value="delete issue" class="buttonlink">
-    </form>
+    @if (Context.UserCan("issue.editissue"))
+    {
+        <a asp-controller="Issue" asp-action="EditIssue" asp-route-id="@Model.Issue.Id">edit</a>
+    }
+    @if (Context.UserCan("issue.deleteissue"))
+    {
+        <form asp-controller="Issue" asp-action="DeleteIssue" asp-route-id="@Model.Issue.Id" class="linkform">
+            <input type="submit" value="delete issue" class="buttonlink">
+        </form>
+    }
     @if (!User.IsAnonymous())
     {
         <form asp-controller="Issue" asp-action="ToggleWatch" asp-route-id="@Model.Issue.Id" class="linkform">
             <input type="submit" value="@(Model.IsWatching ? "unwatch" : "watch")" class="buttonlink">
         </form>
     }
-    <a asp-controller="Issue" asp-action="ViewTalk" asp-route-id="@Model.Issue.Id">discuss</a>
+    @if (Context.UserCan("issue.view"))
+    {
+        <a asp-controller="Issue" asp-action="ViewTalk" asp-route-id="@Model.Issue.Id">discuss</a>
+    }
     <br>
 </div>
 

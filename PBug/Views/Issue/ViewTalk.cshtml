@@ -27,17 +27,26 @@
     }
 </div>
 <div class="underpanel">
-    <a asp-controller="Issue" asp-action="EditIssue" asp-route-id="@Model.Issue.Id">edit</a>
-    <form asp-controller="Issue" asp-action="DeleteIssue" asp-route-id="@Model.Issue.Id" class="linkform">
-        <input type="submit" value="delete issue" class="buttonlink">
-    </form>
+    @if (Context.UserCan("issue.editissue"))
+    {
+        <a asp-controller="Issue" asp-action="EditIssue" asp-route-id="@Model.Issue.Id">edit</a>
+    }
+    @if (Context.UserCan("issue.deleteissue"))
+    {
+        <form asp-controller="Issue" asp-action="DeleteIssue" asp-route-id="@Model.Issue.Id" class="linkform">
+            <input type="submit" value="delete issue" class="buttonlink">
+        </form>
+    }
     @if (!User.IsAnonymous())
     {
         <form asp-controller="Issue" asp-action="ToggleWatch" asp-route-id="@Model.Issue.Id" class="linkform">
             <input type="submit" value="@(Model.IsWatching ? "unwatch" : "watch")" class="buttonlink">
         </form>
     }
-    <a asp-controller="Issue" asp-action="ViewActivity" asp-route-id="@Model.Issue.Id">activity</a>
+    @if (Context.UserCan("issue.activity"))
+    {
+        <a asp-controller="Issue" asp-action="ViewActivity" asp-route-id="@Model.Issue.Id">activity</a>
+    }
     <br>
 </div>
 <p>@MarkdownHelper.ToHtml(Model.Issue.Description)</p>    
@@ -60,20 +69,26 @@
                 <div class="date">Edited on @post.DateOfEdit</div>
             }
             <div class="comment-underpanel">
-                <a asp-controller="Issue" asp-action="EditPost" asp-route-id="@post.Id">edit</a>
+                @if (Context.UserCan("issue.editpost"))
+                {
+                    <a asp-controller="Issue" asp-action="EditPost" asp-route-id="@post.Id">edit</a>
+                }
                 <a asp-controller="Issue" asp-action="ViewTalk" asp-route-id="@Model.Issue.Id" asp-fragment="@post.Id">link to post</a>
             </div>
             @MarkdownHelper.ToHtml(post.ContainedText)
         </li>
     }
-    <li class="entry">
-        <form asp-controller="Issue" asp-action="Post" asp-route-id="@Model.Issue.Id" method="POST" enctype="application/x-www-form-urlencoded">
-            <div class="username">@User.GetClaim(ClaimTypes.Name).Value</div>
-            <div class="date">@(DateTime.Now)</div>
-            <textarea name="text" placeholder="Post contents (Markdown)" class="submit-text"></textarea>
-            <br>
-            <input type="submit" value="Post" class="submitpost" style="float:right">
-            <br>
-        </form>
-    </li>
+    @if (Context.UserCan("issue.post"))
+    {
+        <li class="entry">
+            <form asp-controller="Issue" asp-action="Post" asp-route-id="@Model.Issue.Id" method="POST" enctype="application/x-www-form-urlencoded">
+                <div class="username">@User.GetClaim(ClaimTypes.Name).Value</div>
+                <div class="date">@(DateTime.Now)</div>
+                <textarea name="text" placeholder="Post contents (Markdown)" class="submit-text"></textarea>
+                <br>
+                <input type="submit" value="Post" class="submitpost" style="float:right">
+                <br>
+            </form>
+        </li>
+    }
 </ul>

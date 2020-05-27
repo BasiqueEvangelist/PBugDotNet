@@ -8,11 +8,20 @@
 <h2 class="issue-name">@Model.Name</h2>
 <hr>
 <div class="underpanel">
-    <a asp-controller="KnowledgeBase" asp-action="ViewTalk" asp-route-path="@Model.Path">talk</a>
-    <a asp-controller="KnowledgeBase" asp-action="EditPage" asp-route-path="@Model.Path">edit</a>
-    <form asp-controller="KnowledgeBase" asp-action="DeletePage" asp-route-path="@Model.Path" class="linkform">
-        <input type="submit" value="delete" class="buttonlink">
-    </form>
+    @if (Context.UserCan("kb.talk"))
+    {
+        <a asp-controller="KnowledgeBase" asp-action="ViewTalk" asp-route-path="@Model.Path">talk</a>
+    }
+    @if (Context.UserCan("kb.editpage"))
+    {
+        <a asp-controller="KnowledgeBase" asp-action="EditPage" asp-route-path="@Model.Path">edit</a>
+    }
+    @if (Context.UserCan("kb.deletepage"))
+    {
+        <form asp-controller="KnowledgeBase" asp-action="DeletePage" asp-route-path="@Model.Path" class="linkform">
+            <input type="submit" value="delete" class="buttonlink">
+        </form>
+    }
 </div>
 <div class="taglist">
     @foreach (var tag in Model.Tags.Split(','))

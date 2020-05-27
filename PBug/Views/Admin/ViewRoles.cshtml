@@ -1,26 +1,39 @@
 @model IEnumerable<Role>
 
-<form asp-controller="Admin" asp-action="CreateRole" method="POST" enctype="application/x-www-form-urlencoded">
-    <input type="text" name="name" placeholder="Name of role">
-    <br>
-    <input type="text" name="permissions" placeholder="Permissions contained in role">
-    <br>
-    <input type="submit" value="Create role" style="margin-top:10px;" class="h2 submitpost">
-</form>
+@if (Context.UserCan("admin.createrole"))
+{
+    <form asp-controller="Admin" asp-action="CreateRole" method="POST" enctype="application/x-www-form-urlencoded">
+        <input type="text" name="name" placeholder="Name of role">
+        <br>
+        <input type="text" name="permissions" placeholder="Permissions contained in role">
+        <br>
+        <input type="submit" value="Create role" style="margin-top:10px;" class="h2 submitpost">
+    </form>
+}
 
 <ul class="issues-list">
     @foreach (var role in Model)
     {
         <li>
-            <form asp-controller="Admin" asp-action="EditRole" asp-route-id="@role.Id" method="POST" style="display:inline">
+            <form asp-controller="Admin" asp-action="@(Context.UserCan("admin.editrole") ? "EditRole" : "")" asp-route-id="@role.Id" method="POST" style="display:inline">
                 @role.Name
                 
-                <input type="text" name="permissions" value="@role.Permissions">
-                <input type="submit" value="Edit" style="margin-top:10px;" class="h2 submitpost">
+                @if (Context.UserCan("admin.editrole"))
+                {
+                    <input type="text" name="permissions" value="@role.Permissions">
+                    <input type="submit" value="Edit" style="margin-top:10px;" class="h2 submitpost">
+                }
+                else
+                {
+                    <text>(@role.Permissions)</text>
+                }
             </form>
-            <form asp-controller="Admin" asp-action="DeleteRole" asp-route-id="@role.Id" method="POST" style="display:inline">
-                <input type="submit" value="❌" style="display:inline; color:red;" class="buttonlink">
-            </form>
+            @if (Context.UserCan("admin.deleterole"))
+            {
+                <form asp-controller="Admin" asp-action="DeleteRole" asp-route-id="@role.Id" method="POST" style="display:inline">
+                    <input type="submit" value="❌" style="display:inline; color:red;" class="buttonlink">
+                </form>
+            }
         </li>
     }
 </ul>

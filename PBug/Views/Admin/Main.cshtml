@@ -13,8 +13,20 @@
             a(href=vroot+"admin/roles") View all roles *@
 
 <ul class="issues-list">
-    <li><a asp-controller="Admin" asp-action="CreateProject">Create new project code</a></li>
-    <li><a asp-controller="Admin" asp-action="ViewUsers">View all registered users</a></li>
-    <li><a asp-controller="Admin" asp-action="ViewInvites">View unredeemed invites</a></li>
-    <li><a asp-controller="Admin" asp-action="ViewRoles">View all roles</a></li>
+    @if (Context.UserCan("admin.createproject"))
+    {
+        <li><a asp-controller="Admin" asp-action="CreateProject">Create new project code</a></li>
+    }
+    @if (Context.UserCan("admin.users"))
+    {
+        <li><a asp-controller="Admin" asp-action="ViewUsers">View all registered users</a></li>
+    }
+    @if (Context.UserCan("admin.viewinvites"))
+    {
+        <li><a asp-controller="Admin" asp-action="ViewInvites">View unredeemed invites</a></li>
+    }
+    @if (Context.UserCan("admin.viewroles"))
+    {
+        <li><a asp-controller="Admin" asp-action="ViewRoles">View all roles</a></li>
+    }
 </ul>
