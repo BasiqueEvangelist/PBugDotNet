@@ -1,42 +1,5 @@
 @model IssueEditIssueModel
 
-@*
-        label(for="projectchooser") Project:
-        select.blueunderline#projectchooser(name="newprojectid",required)
-            each project in projects
-                if issue.projectid == project.id
-                    option(value=project.id.toString() selected)= project.projectname
-                else
-                    option(value=project.id.toString())= project.projectname
-        |
-        label(for="assigneechooser") Assignee:
-        select.blueunderline#assigneechooser(name="newassigneeid")
-            option(value="-1") Unassign
-            each user in users
-                if issue.assigneeid == user.id
-                    option(value=user.id selected)=user.fullname
-                else
-                    option(value=user.id)=user.fullname
-        |
-        label(for="statuschooser") Status:
-        select.blueunderline#statuschooser(name="newstatus")
-            each status in Object.keys(statuses.statuses)
-                if issue.status === Number(status)
-                    option(value=statuses.statuses[status] selected)=statuses.descriptions[status]
-                else
-                    option(value=statuses.statuses[status])=statuses.descriptions[status]
-        br
-        each file in files
-            div.file
-                a.sendbutton(href="javascript:void(0)" data-uid=file.fileid) X
-                |
-                a.filename(href=vroot+"file/"+file.fileid)=file.filename
-        |
-        br
-        input(type="file" multiple name="file[]")
-        br
-        input.submitpost(type="submit",value="Repost",style="float:right") *@
-
 <form asp-controller="Issue" asp-action="EditIssue" asp-route-id="@Model.Issue.Id" method="POST" enctype="multipart/form-data">
     <input type="hidden" name="filesremoved" value="[]" id="filesremoved">
     <input type="text" name="newtitle" class="title-input" required value="@Model.Issue.Name">

@@ -15,11 +15,6 @@
     @foreach (var infopage in @Model.FoundInfopages)
     {
         <li>
-             @* a(href=vroot+"kb/view/" + result.path)
-                        .issue-tag
-                            span.assigneetext="Author: " + (result.authorid === null ? "Anonymous" : result.authorname)
-                        = result.pagename *@
-
             <a asp-controller="KnowledgeBase" asp-action="ViewPage" asp-route-path="@infopage.Path">
                 <div class="issuetag">
                     <span class="assigneetext">Author: @(infopage.Author == null ? "Anonymous" : infopage.Author.FullName)</span>
