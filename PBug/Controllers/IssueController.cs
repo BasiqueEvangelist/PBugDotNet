@@ -49,7 +49,7 @@ namespace PBug.Controllers
                 else if (sub.StartsWith("status:"))
                 {
                     IssueStatus status;
-                    if (!Enum.TryParse(sub.Substring("status:".Length), out status))
+                    if (!Enum.TryParse(sub.Substring("status:".Length), true, out status))
                         continue;
                     searchQuery = searchQuery.Where(x => x.Issue.Status == status);
                 }
@@ -145,7 +145,7 @@ namespace PBug.Controllers
                 else if (sub.StartsWith("status:"))
                 {
                     IssueStatus status;
-                    if (!Enum.TryParse(sub.Substring("status:".Length), out status))
+                    if (!Enum.TryParse(sub.Substring("status:".Length), true, out status))
                         continue;
                     searchQuery = searchQuery.Where(x => x.Status == status);
                 }
