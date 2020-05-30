@@ -43,7 +43,7 @@
 }
 
 <li class="entry">
-    <a>
+    <a asp-controller="Issue" asp-action="ViewTalk" asp-route-id="@Model.Issue.Id">
         <div class="from">
             From
             [@(Model.Issue.Project.ShortProjectId)-@(Model.Issue.Id.ToString().PadLeft(4, '0'))]
