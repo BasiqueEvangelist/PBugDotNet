@@ -41,7 +41,7 @@
     <input type="hidden" name="filesremoved" value="[]" id="filesremoved">
     <input type="text" name="newtitle" class="title-input" required value="@Model.Issue.Name">
     <hr>
-    <input type="text" name="newtags" id="taglist" class="taglist" required value="@Model.Issue.Tags" onkeypress="return event.keyCode != 13;">
+    <input type="text" name="newtags" id="taglist" class="taglist" value="@Model.Issue.Tags" onkeypress="return event.keyCode != 13;">
     <br>
     <textarea name="newtext" placeholder="Description" class="submit-text" required>@Model.Issue.Description</textarea>
     <br>

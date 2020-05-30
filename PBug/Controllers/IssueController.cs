@@ -433,7 +433,7 @@ namespace PBug.Controllers
                     OldName = i.Name,
                     NewName = req.NewName,
                     OldTags = i.Tags,
-                    NewTags = req.NewTags,
+                    NewTags = req.NewTags ?? "",
                     OldDescription = i.Description,
                     NewDescription = req.NewDescription,
                     OldProjectId = i.ProjectId,
@@ -445,7 +445,7 @@ namespace PBug.Controllers
                 });
 
                 i.Name = req.NewName;
-                i.Tags = req.NewTags;
+                i.Tags = req.NewTags ?? "";
                 i.Description = req.NewDescription;
                 i.ProjectId = req.NewProjectID;
                 i.AssigneeId = req.NewAssigneeID == -1 ? null : new uint?((uint)req.NewAssigneeID);
