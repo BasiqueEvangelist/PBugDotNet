@@ -54,9 +54,7 @@ namespace PBug.Data
 
                 entity.Property(e => e.ContainedText)
                     .HasColumnName("containedtext")
-                    .HasColumnType("text")
-                    .HasCharSet("utf8mb4")
-                    .HasCollation("utf8mb4_general_ci");
+                    .HasColumnType("text");
 
                 entity.Property(e => e.DateOfCreation)
                     .HasColumnName("dateofcreation")
@@ -108,9 +106,7 @@ namespace PBug.Data
                 entity.Property(e => e.ContainedText)
                     .IsRequired()
                     .HasColumnName("containedtext")
-                    .HasColumnType("text")
-                    .HasCharSet("utf8mb4")
-                    .HasCollation("utf8mb4_general_ci");
+                    .HasColumnType("text");
 
                 entity.Property(e => e.DateOfCreation)
                     .HasColumnName("dateofcreation")
@@ -127,23 +123,17 @@ namespace PBug.Data
                 entity.Property(e => e.Name)
                     .IsRequired()
                     .HasColumnName("pagename")
-                    .HasColumnType("varchar(100)")
-                    .HasCharSet("utf8mb4")
-                    .HasCollation("utf8mb4_general_ci");
+                    .HasColumnType("varchar(100)");
 
                 entity.Property(e => e.Tags)
                     .IsRequired()
                     .HasColumnName("pagetags")
-                    .HasColumnType("text")
-                    .HasCharSet("utf8mb4")
-                    .HasCollation("utf8mb4_general_ci");
+                    .HasColumnType("text");
 
                 entity.Property(e => e.Path)
                     .IsRequired()
                     .HasColumnName("path")
-                    .HasColumnType("varchar(200)")
-                    .HasCharSet("utf8mb4")
-                    .HasCollation("utf8mb4_general_ci");
+                    .HasColumnType("varchar(200)");
 
                 entity.Property(e => e.Secrecy)
                     .HasColumnName("secrecy")
@@ -184,9 +174,7 @@ namespace PBug.Data
                 entity.Property(e => e.Uid)
                     .IsRequired()
                     .HasColumnName("uid")
-                    .HasColumnType("varchar(128)")
-                    .HasCharSet("utf8mb4")
-                    .HasCollation("utf8mb4_general_ci");
+                    .HasColumnType("varchar(128)");
 
                 entity.HasOne(d => d.Role)
                     .WithMany(p => p.Invites)
@@ -202,7 +190,9 @@ namespace PBug.Data
 
                 entity.HasDiscriminator(x => x.Type)
                     .HasValue<CreateIssueActivity>("createissue")
-                    .HasValue<EditIssueActivity>("editissue");
+                    .HasValue<EditIssueActivity>("editissue")
+                    .HasValue<PostActivity>("post")
+                    .HasValue<EditPostActivity>("editpost");
 
                 entity.HasIndex(e => e.AuthorId)
                     .HasName("issueactivities_authorid_foreign");
@@ -228,9 +218,7 @@ namespace PBug.Data
 
                 entity.Property(e => e.Type)
                    .HasColumnName("type")
-                   .HasColumnType("varchar(30)")
-                   .HasCharSet("utf8mb4")
-                   .HasCollation("utf8mb4_general_ci");
+                   .HasColumnType("varchar(30)");
 
                 entity.HasOne(d => d.Author)
                     .WithMany(p => p.IssueActivities)
@@ -251,23 +239,17 @@ namespace PBug.Data
                 entity.Property(e => e.Name)
                     .IsRequired()
                     .HasColumnName("name")
-                    .HasColumnType("varchar(100)")
-                    .HasCharSet("utf8mb4")
-                    .HasCollation("utf8mb4_general_ci");
+                    .HasColumnType("varchar(100)");
 
                 entity.Property(e => e.Description)
                     .IsRequired()
                     .HasColumnName("description")
-                    .HasColumnType("text")
-                    .HasCharSet("utf8mb4")
-                    .HasCollation("utf8mb4_general_ci");
+                    .HasColumnType("text");
 
                 entity.Property(e => e.Tags)
                     .IsRequired()
                     .HasColumnName("tags")
-                    .HasColumnType("text")
-                    .HasCharSet("utf8mb4")
-                    .HasCollation("utf8mb4_general_ci");
+                    .HasColumnType("text");
 
                 entity.Property(e => e.ProjectId)
                     .IsRequired()
@@ -298,23 +280,17 @@ namespace PBug.Data
                 entity.Property(e => e.OldName)
                     .IsRequired()
                     .HasColumnName("oldname")
-                    .HasColumnType("varchar(100)")
-                    .HasCharSet("utf8mb4")
-                    .HasCollation("utf8mb4_general_ci");
+                    .HasColumnType("varchar(100)");
 
                 entity.Property(e => e.OldDescription)
                     .IsRequired()
                     .HasColumnName("olddescription")
-                    .HasColumnType("text")
-                    .HasCharSet("utf8mb4")
-                    .HasCollation("utf8mb4_general_ci");
+                    .HasColumnType("text");
 
                 entity.Property(e => e.OldTags)
                     .IsRequired()
                     .HasColumnName("oldtags")
-                    .HasColumnType("text")
-                    .HasCharSet("utf8mb4")
-                    .HasCollation("utf8mb4_general_ci");
+                    .HasColumnType("text");
 
                 entity.Property(e => e.OldProjectId)
                     .IsRequired()
@@ -335,23 +311,17 @@ namespace PBug.Data
                 entity.Property(e => e.NewName)
                     .IsRequired()
                     .HasColumnName("newname")
-                    .HasColumnType("varchar(100)")
-                    .HasCharSet("utf8mb4")
-                    .HasCollation("utf8mb4_general_ci");
+                    .HasColumnType("varchar(100)");
 
                 entity.Property(e => e.NewDescription)
                     .IsRequired()
                     .HasColumnName("newdescription")
-                    .HasColumnType("text")
-                    .HasCharSet("utf8mb4")
-                    .HasCollation("utf8mb4_general_ci");
+                    .HasColumnType("text");
 
                 entity.Property(e => e.NewTags)
                     .IsRequired()
                     .HasColumnName("newtags")
-                    .HasColumnType("text")
-                    .HasCharSet("utf8mb4")
-                    .HasCollation("utf8mb4_general_ci");
+                    .HasColumnType("text");
 
                 entity.Property(e => e.NewProjectId)
                     .IsRequired()
@@ -399,9 +369,7 @@ namespace PBug.Data
                 entity.Property(e => e.ContainedText)
                     .IsRequired()
                     .HasColumnName("containedtext")
-                    .HasColumnType("text")
-                    .HasCharSet("utf8mb4")
-                    .HasCollation("utf8mb4_general_ci");
+                    .HasColumnType("text");
 
                 entity.Property(e => e.PostId)
                     .IsRequired()
@@ -421,16 +389,12 @@ namespace PBug.Data
                 entity.Property(e => e.OldContainedText)
                     .IsRequired()
                     .HasColumnName("oldcontainedtext")
-                    .HasColumnType("text")
-                    .HasCharSet("utf8mb4")
-                    .HasCollation("utf8mb4_general_ci");
+                    .HasColumnType("text");
 
                 entity.Property(e => e.NewContainedText)
                     .IsRequired()
                     .HasColumnName("newcontainedtext")
-                    .HasColumnType("text")
-                    .HasCharSet("utf8mb4")
-                    .HasCollation("utf8mb4_general_ci");
+                    .HasColumnType("text");
 
                 entity.Property(e => e.PostId)
                     .IsRequired()
@@ -458,16 +422,12 @@ namespace PBug.Data
 
                 entity.Property(e => e.FileId)
                     .HasColumnName("fileid")
-                    .HasColumnType("varchar(128)")
-                    .HasCharSet("utf8mb4")
-                    .HasCollation("utf8mb4_general_ci");
+                    .HasColumnType("varchar(128)");
 
                 entity.Property(e => e.FileName)
                     .IsRequired()
                     .HasColumnName("filename")
-                    .HasColumnType("varchar(100)")
-                    .HasCharSet("utf8mb4")
-                    .HasCollation("utf8mb4_general_ci");
+                    .HasColumnType("varchar(100)");
 
                 entity.Property(e => e.IssueId)
                     .HasColumnName("issueid")
@@ -502,9 +462,7 @@ namespace PBug.Data
                 entity.Property(e => e.ContainedText)
                     .IsRequired()
                     .HasColumnName("containedtext")
-                    .HasColumnType("text")
-                    .HasCharSet("utf8mb4")
-                    .HasCollation("utf8mb4_general_ci");
+                    .HasColumnType("text");
 
                 entity.Property(e => e.DateOfCreation)
                     .HasColumnName("dateofcreation")
@@ -564,23 +522,17 @@ namespace PBug.Data
                 entity.Property(e => e.Description)
                     .IsRequired()
                     .HasColumnName("description")
-                    .HasColumnType("text")
-                    .HasCharSet("utf8mb4")
-                    .HasCollation("utf8mb4_general_ci");
+                    .HasColumnType("text");
 
                 entity.Property(e => e.Name)
                     .IsRequired()
                     .HasColumnName("issuename")
-                    .HasColumnType("varchar(100)")
-                    .HasCharSet("utf8mb4")
-                    .HasCollation("utf8mb4_general_ci");
+                    .HasColumnType("varchar(100)");
 
                 entity.Property(e => e.Tags)
                     .IsRequired()
                     .HasColumnName("issuetags")
-                    .HasColumnType("text")
-                    .HasCharSet("utf8mb4")
-                    .HasCollation("utf8mb4_general_ci");
+                    .HasColumnType("text");
 
                 entity.Property(e => e.ProjectId)
                     .HasColumnName("projectid")
@@ -666,16 +618,11 @@ namespace PBug.Data
                 entity.Property(e => e.Name)
                     .IsRequired()
                     .HasColumnName("projectname")
-                    .HasColumnType("varchar(100)")
-                    .HasCharSet("utf8mb4")
-                    .HasCollation("utf8mb4_general_ci");
-
+                    .HasColumnType("varchar(100)");
                 entity.Property(e => e.ShortProjectId)
                     .IsRequired()
                     .HasColumnName("shortprojectid")
-                    .HasColumnType("varchar(3)")
-                    .HasCharSet("utf8mb4")
-                    .HasCollation("utf8mb4_general_ci");
+                    .HasColumnType("varchar(3)");
 
                 entity.HasOne(d => d.Author)
                     .WithMany(p => p.Projects)
@@ -700,15 +647,11 @@ namespace PBug.Data
                 entity.Property(e => e.Name)
                     .IsRequired()
                     .HasColumnName("name")
-                    .HasColumnType("varchar(100)")
-                    .HasCharSet("utf8mb4")
-                    .HasCollation("utf8mb4_general_ci");
+                    .HasColumnType("varchar(100)");
 
                 entity.Property(e => e.Permissions)
                     .HasColumnName("permissions")
-                    .HasColumnType("text")
-                    .HasCharSet("utf8mb4")
-                    .HasCollation("utf8mb4_general_ci");
+                    .HasColumnType("text");
             });
             #endregion
 
@@ -731,9 +674,7 @@ namespace PBug.Data
                 entity.Property(e => e.FullName)
                     .IsRequired()
                     .HasColumnName("fullname")
-                    .HasColumnType("varchar(100)")
-                    .HasCharSet("utf8mb4")
-                    .HasCollation("utf8mb4_general_ci");
+                    .HasColumnType("varchar(100)");
 
                 entity.Property(e => e.PasswordHash)
                     .HasColumnName("passwordhash")
@@ -751,9 +692,7 @@ namespace PBug.Data
                 entity.Property(e => e.Username)
                     .IsRequired()
                     .HasColumnName("username")
-                    .HasColumnType("varchar(64)")
-                    .HasCharSet("utf8mb4")
-                    .HasCollation("utf8mb4_general_ci");
+                    .HasColumnType("varchar(64)");
 
                 entity.HasOne(d => d.Role)
                     .WithMany(p => p.Users)
