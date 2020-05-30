@@ -168,9 +168,9 @@
             @if (eia.OldStatus != eia.NewStatus)
             {
                 <span class="blue">changed status from</span>
-                @Enum.GetName(typeof(IssueStatus),eia.OldStatus)
+                <span class="issue-@(eia.OldStatus.ToString().ToLower())-marker">@Enum.GetName(typeof(IssueStatus),eia.OldStatus)</span>
                 <span class="blue">to</span>
-                @Enum.GetName(typeof(IssueStatus),eia.NewStatus)
+                <span class="issue-@(eia.NewStatus.ToString().ToLower())-marker">@Enum.GetName(typeof(IssueStatus),eia.NewStatus)</span>
             }
         </span>
     }
