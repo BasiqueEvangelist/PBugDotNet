@@ -154,6 +154,37 @@ namespace PBug.Controllers
             }
         }
 
+        [HttpGet]
+        [Route("/changepassword")]
+        public IActionResult ChangePassword()
+        {
+            if (HttpContext.User.IsAnonymous())
+                return Challenge();
+            return View();
+        }
+
+        [HttpPost]
+        [Route("/changepassword")]
+        public async Task<IActionResult> ChangePassword(ChangePasswordRequest req)
+        {
+            if (HttpContext.User.IsAnonymous())
+                return Challenge();
+            if (!ModelState.IsValid)
+                return View();
+            var user = await Db.Users
+                .SingleOrDefaultAsync(x => x.Id == HttpContext.User.GetUserId());
+            byte[] newHash = AuthUtils.GetHashFor(req.OldPassword, user.PasswordSalt);
+            if (!Enumerable.SequenceEqual(newHash, user.PasswordHash))
+            {
+                ModelState.AddModelError("", "Incorrect password");
+                return View();
+            }
+            user.PasswordSalt = AuthUtils.GetRandomData(64);
+            user.PasswordHash = AuthUtils.GetHashFor(req.NewPassword, user.PasswordSalt);
+            await Db.SaveChangesAsync();
+            return RedirectToAction("News", "Issue");
+        }
+
         [Route("/logout/")]
         public async Task<IActionResult> LogOut([FromQuery] string redirect = "")
         {

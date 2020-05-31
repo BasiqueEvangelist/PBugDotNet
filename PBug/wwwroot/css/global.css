@@ -355,6 +355,16 @@ label {
 	margin-top: 100px;
 }
 
+.changepassword-grid {
+	display: grid;
+	grid-template-columns: [val] 100px [fields] 300px [end-col];
+	grid-template-rows: [currentpassword] auto [newpassword] auto [btn] auto [end-row];
+	column-gap: 15px;
+	row-gap: 25px;
+	text-align: center;
+	margin-top: 100px;
+}
+
 .valcol {
 	grid-column: val;
 	justify-self: end;
@@ -391,6 +401,14 @@ label {
 
 .btnrow {
 	grid-row: btn;
+}
+
+.currentpassrow {
+	grid-row: currentpassword;
+}
+
+.newpassrow {
+	grid-row: newpassword;
 }
 
 .icon {

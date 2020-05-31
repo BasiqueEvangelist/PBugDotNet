@@ -30,4 +30,14 @@ namespace PBug.Controllers
         [StringLength(maximumLength: int.MaxValue, MinimumLength = 6)]
         public string Password { get; set; }
     }
+
+    public class ChangePasswordRequest
+    {
+        [BindProperty(Name = "oldpassword"), BindRequired]
+        public string OldPassword { get; set; }
+
+        [BindProperty(Name = "newpassword"), BindRequired]
+        [StringLength(maximumLength: int.MaxValue, MinimumLength = 6)]
+        public string NewPassword { get; set; }
+    }
 }
