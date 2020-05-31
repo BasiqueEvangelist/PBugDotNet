@@ -23,6 +23,7 @@ namespace PBug.Data
         public byte[] PasswordHash { get; set; }
         public byte[] PasswordSalt { get; set; }
         public uint? RoleId { get; set; }
+        public PasswordFunction PasswordFunc { get; set; }
 
         public virtual Role Role { get; set; }
         public virtual ICollection<InfopageComment> InfopageComments { get; set; }
@@ -34,5 +35,10 @@ namespace PBug.Data
         public virtual ICollection<Issue> IssuesAuthored { get; set; }
         public virtual ICollection<IssueWatcher> IssuesWatched { get; set; }
         public virtual ICollection<Project> Projects { get; set; }
+    }
+
+    public enum PasswordFunction : byte
+    {
+        PBKDF2
     }
 }

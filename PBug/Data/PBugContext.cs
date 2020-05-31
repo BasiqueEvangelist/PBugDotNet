@@ -677,6 +677,7 @@ namespace PBug.Data
                     .HasColumnType("varchar(100)");
 
                 entity.Property(e => e.PasswordHash)
+                    .IsRequired()
                     .HasColumnName("passwordhash")
                     .HasColumnType("varbinary(64)");
 
@@ -693,6 +694,11 @@ namespace PBug.Data
                     .IsRequired()
                     .HasColumnName("username")
                     .HasColumnType("varchar(64)");
+
+                entity.Property(e => e.PasswordFunc)
+                    .IsRequired()
+                    .HasColumnName("passwordfunc")
+                    .HasColumnType("tinyint(4)");
 
                 entity.HasOne(d => d.Role)
                     .WithMany(p => p.Users)
