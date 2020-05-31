@@ -26,10 +26,10 @@
     {
         <li class="entry" id="@comment.Id">
             <div class="username">@(comment.Author == null ? "Anonymous" : comment.Author.FullName)</div>
-            <div class="date">@comment.DateOfCreation</div>
+            <div class="date">@DateUtils.StringDate(comment.DateOfCreation)</div>
             @if (comment.DateOfEdit != null)
             {
-                <div class="date">Edited on @comment.DateOfEdit</div>
+                <div class="date">Edited on @DateUtils.StringDate(comment.DateOfEdit)</div>
             }
             <div class="comment-underpanel">
                 @if (Context.UserCan("kb.editcomment"))
@@ -47,7 +47,7 @@
         <li class="entry">
             <form asp-controller="KnowledgeBase" asp-action="Comment" asp-route-path="@Model.Path" method="POST" enctype="application/x-www-form-urlencoded">
                 <div class="username">@User.GetClaim(ClaimTypes.Name).Value</div>
-                <div class="date">@(DateTime.Now)</div>
+                <div class="date">@DateUtils.StringDate(DateTime.UtcNow)</div>
                 <textarea name="text" placeholder="Comment contents (Markdown)" class="submit-text"></textarea>
                 <br>
                 <input type="submit" value="Post" class="submitpost" style="float:right">

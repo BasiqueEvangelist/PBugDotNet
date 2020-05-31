@@ -63,10 +63,10 @@
     {
         <li class="entry" id=@post.Id>
             <div class="username">@(post.Author == null ? "Anonymous" : post.Author.FullName)</div>
-            <div class="date">@post.DateOfCreation</div>
+            <div class="date">@DateUtils.StringDate(post.DateOfCreation)</div>
             @if (post.DateOfEdit != null)
             {
-                <div class="date">Edited on @post.DateOfEdit</div>
+                <div class="date">Edited on @DateUtils.StringDate(post.DateOfEdit)</div>
             }
             <div class="comment-underpanel">
                 @if (Context.UserCan("issue.editpost"))
@@ -83,7 +83,7 @@
         <li class="entry">
             <form asp-controller="Issue" asp-action="Post" asp-route-id="@Model.Issue.Id" method="POST" enctype="application/x-www-form-urlencoded">
                 <div class="username">@User.GetClaim(ClaimTypes.Name).Value</div>
-                <div class="date">@(DateTime.Now)</div>
+                <div class="date">@DateUtils.StringDate(DateTime.UtcNow)</div>
                 <textarea name="text" placeholder="Post contents (Markdown)" class="submit-text"></textarea>
                 <br>
                 <input type="submit" value="Post" class="submitpost" style="float:right">

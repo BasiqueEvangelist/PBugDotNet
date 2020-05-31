@@ -54,7 +54,7 @@
             <span class="issue">@Model.Issue.Name</span>
         </div>
     </a>
-    <div class="date">@Model.DateOfOccurance</div>
+    <div class="date">@DateUtils.StringDate(Model.DateOfOccurance)</div>
     @(Model.Author == null ? "Anonymous" : Model.Author.FullName)
 
     @if (Model is PostActivity pa)
