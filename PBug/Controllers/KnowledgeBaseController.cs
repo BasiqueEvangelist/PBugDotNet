@@ -175,6 +175,7 @@ namespace PBug.Controllers
         {
             var page = await Db.Infopages
                 .Include(x => x.Comments)
+                    .ThenInclude(x => x.Author)
                 .SingleAsync(x => x.Path == path);
             if (!HttpContext.UserCan("kb.secrecy." + page.Secrecy.ToString()))
                 return Forbid();
