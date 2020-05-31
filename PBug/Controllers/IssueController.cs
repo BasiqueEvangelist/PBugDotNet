@@ -38,7 +38,7 @@ namespace PBug.Controllers
                 .Include(x => x.Issue)
                     .ThenInclude(x => x.Project)
                 .Include(x => x.Author);
-            bool orderAscending = true;
+            bool orderDescending = true;
             foreach (string sub in q.Split(' ', StringSplitOptions.RemoveEmptyEntries))
             {
                 if (sub.StartsWith("#"))
@@ -108,14 +108,14 @@ namespace PBug.Controllers
                 else if (sub.StartsWith("order:"))
                 {
                     string order = sub.Substring("order:".Length);
-                    if (!Regex.IsMatch(order, ".*asc.*"))
-                        orderAscending = false;
+                    if (Regex.IsMatch(order, ".*asc.*"))
+                        orderDescending = false;
                 }
             }
-            if (orderAscending)
-                searchQuery = searchQuery.OrderBy(x => x.Id);
-            else
+            if (orderDescending)
                 searchQuery = searchQuery.OrderByDescending(x => x.Id);
+            else
+                searchQuery = searchQuery.OrderBy(x => x.Id);
 
             model.FoundNews = await searchQuery
                 .ToArrayAsync();
@@ -134,7 +134,7 @@ namespace PBug.Controllers
             IQueryable<Issue> searchQuery = Db.Issues
                 .Include(x => x.Assignee)
                 .Include(x => x.Project);
-            bool orderAscending = true;
+            bool orderDescending = true;
             foreach (string sub in q.Split(' ', StringSplitOptions.RemoveEmptyEntries))
             {
                 if (sub.StartsWith("#"))
@@ -192,14 +192,14 @@ namespace PBug.Controllers
                 else if (sub.StartsWith("order:"))
                 {
                     string order = sub.Substring("order:".Length);
-                    if (!Regex.IsMatch(order, ".*asc.*"))
-                        orderAscending = false;
+                    if (Regex.IsMatch(order, ".*asc.*"))
+                        orderDescending = false;
                 }
             }
-            if (orderAscending)
-                searchQuery = searchQuery.OrderBy(x => x.Id);
-            else
+            if (orderDescending)
                 searchQuery = searchQuery.OrderByDescending(x => x.Id);
+            else
+                searchQuery = searchQuery.OrderBy(x => x.Id);
 
             model.FoundIssues = await searchQuery
                 .ToArrayAsync();
