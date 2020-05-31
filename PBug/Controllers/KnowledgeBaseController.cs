@@ -136,10 +136,17 @@ namespace PBug.Controllers
 
         [Route("/kb/edit/{*path}")]
         [HttpGet]
-        [PBugPermission("kb.editpage")]
         public async Task<IActionResult> EditPage([FromRoute] string path)
         {
             var page = await Db.Infopages.SingleAsync(x => x.Path == path);
+            if (!HttpContext.UserCan("kb.editpage.all")
+            && !(HttpContext.UserCan("kb.editpage.own") && ((int?)page.AuthorId ?? -1) == HttpContext.User.GetUserId()))
+            {
+                if (HttpContext.User.IsAnonymous())
+                    return Challenge();
+                else
+                    return Forbid();
+            }
             if (!HttpContext.UserCan("kb.secrecy." + page.Secrecy.ToString()))
                 return Forbid();
             return View(page);
@@ -147,10 +154,18 @@ namespace PBug.Controllers
 
         [Route("/kb/edit/{*path}")]
         [HttpPost]
-        [PBugPermission("kb.editpage")]
         public async Task<IActionResult> EditPage([FromRoute] string path, CreatePageRequest req)
         {
             Infopage page = await Db.Infopages.SingleAsync(x => x.Path == path);
+            if (!HttpContext.UserCan("kb.editpage.all")
+            && !(HttpContext.UserCan("kb.editpage.own") && ((int?)page.AuthorId ?? -1) == HttpContext.User.GetUserId()))
+            {
+                if (HttpContext.User.IsAnonymous())
+                    return Challenge();
+                else
+                    return Forbid();
+            }
+
             if (!ModelState.IsValid)
                 return View(page);
 
@@ -207,7 +222,6 @@ namespace PBug.Controllers
 
         [Route("/kb/editcomment/{id}")]
         [HttpGet]
-        [PBugPermission("kb.editcomment")]
         public async Task<IActionResult> EditComment([FromRoute] uint id)
         {
             var comment = await Db.InfopageComments
@@ -215,6 +229,14 @@ namespace PBug.Controllers
                 .Include(x => x.Infopage)
                 .SingleAsync(x => x.Id == id);
 
+            if (!HttpContext.UserCan("kb.editcomment.all")
+            && !(HttpContext.UserCan("kb.editcomment.own") && ((int?)comment.AuthorId ?? -1) == HttpContext.User.GetUserId()))
+            {
+                if (HttpContext.User.IsAnonymous())
+                    return Challenge();
+                else
+                    return Forbid();
+            }
             if (!HttpContext.UserCan("kb.secrecy." + comment.Infopage.Secrecy.ToString()))
                 return Forbid();
 
@@ -223,12 +245,19 @@ namespace PBug.Controllers
 
         [Route("/kb/editcomment/{id}")]
         [HttpPost]
-        [PBugPermission("kb.editcomment")]
         public async Task<IActionResult> EditComment([FromRoute] uint id, CommentPostRequest req)
         {
             InfopageComment comment = await Db.InfopageComments
                 .Include(x => x.Infopage)
                 .SingleAsync(x => x.Id == id);
+            if (!HttpContext.UserCan("kb.editcomment.all")
+            && !(HttpContext.UserCan("kb.editcomment.own") && ((int?)comment.AuthorId ?? -1) == HttpContext.User.GetUserId()))
+            {
+                if (HttpContext.User.IsAnonymous())
+                    return Challenge();
+                else
+                    return Forbid();
+            }
             if (!ModelState.IsValid)
                 return View(comment);
 

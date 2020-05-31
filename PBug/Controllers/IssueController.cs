@@ -286,7 +286,7 @@ namespace PBug.Controllers
         {
             Issue i = await Db.Issues
                 .Include(x => x.Posts)
-                .ThenInclude(x => x.Author)
+                    .ThenInclude(x => x.Author)
                 .Include(x => x.Author)
                 .Include(x => x.Project)
                 .Include(x => x.Files)
@@ -355,17 +355,26 @@ namespace PBug.Controllers
         }
 
         [Route("/issues/posts/{id?}/edit")]
-        [PBugPermission("issue.editpost")]
         [HttpGet]
         public async Task<IActionResult> EditPost([FromRoute] uint id)
         {
-            return View(await Db.IssuePosts
-                    .Include(x => x.Author)
-                    .SingleAsync(x => x.Id == id));
+            IssuePost post = await Db.IssuePosts
+                .Include(x => x.Author)
+                .SingleAsync(x => x.Id == id);
+
+            if (!HttpContext.UserCan("issue.editpost.all")
+            && !(HttpContext.UserCan("issue.editpost.own") && ((int?)post.AuthorId ?? -1) == HttpContext.User.GetUserId()))
+            {
+                if (HttpContext.User.IsAnonymous())
+                    return Challenge();
+                else
+                    return Forbid();
+            }
+
+            return View(post);
         }
 
         [Route("/issues/posts/{id?}/edit")]
-        [PBugPermission("issue.editpost")]
         [HttpPost]
         public async Task<IActionResult> EditPost([FromRoute] uint id, CommentPostRequest req)
         {
@@ -373,6 +382,15 @@ namespace PBug.Controllers
                 return BadRequest();
 
             IssuePost post = await Db.IssuePosts.FindAsync(id);
+
+            if (!HttpContext.UserCan("issue.editpost.all")
+            && !(HttpContext.UserCan("issue.editpost.own") && ((int?)post.AuthorId ?? -1) == HttpContext.User.GetUserId()))
+            {
+                if (HttpContext.User.IsAnonymous())
+                    return Challenge();
+                else
+                    return Forbid();
+            }
 
             if (post.ContainedText != req.Text)
             {
@@ -393,22 +411,31 @@ namespace PBug.Controllers
         }
 
         [Route("/issues/{id?}/edit")]
-        [PBugPermission("issue.editissue")]
         [HttpGet]
         public async Task<IActionResult> EditIssue([FromRoute] uint id)
         {
+            Issue i = await Db.Issues
+                .Include(x => x.Files)
+                .SingleAsync(x => x.Id == id);
+
+            if (!HttpContext.UserCan("issue.editissue.all")
+            && !(HttpContext.UserCan("issue.editissue.own") && ((int?)i.AuthorId ?? -1) == HttpContext.User.GetUserId()))
+            {
+                if (HttpContext.User.IsAnonymous())
+                    return Challenge();
+                else
+                    return Forbid();
+            }
+
             return View(new IssueEditIssueModel()
             {
-                Issue = await Db.Issues
-                    .Include(x => x.Files)
-                    .SingleAsync(x => x.Id == id),
+                Issue = i,
                 AllProjects = await Db.Projects.ToArrayAsync(),
                 AllUsers = await Db.Users.ToArrayAsync()
             });
         }
 
         [Route("/issues/{id?}/edit")]
-        [PBugPermission("issue.editissue")]
         [HttpPost]
         public async Task<IActionResult> EditIssue([FromRoute] uint id, EditIssueRequest req)
         {
@@ -416,6 +443,15 @@ namespace PBug.Controllers
                 return View();
 
             Issue i = await Db.Issues.FindAsync(id);
+
+            if (!HttpContext.UserCan("issue.editissue.all")
+            && !(HttpContext.UserCan("issue.editissue.own") && ((int?)i.AuthorId ?? -1) == HttpContext.User.GetUserId()))
+            {
+                if (HttpContext.User.IsAnonymous())
+                    return Challenge();
+                else
+                    return Forbid();
+            }
 
             string[] filesremovedproc = JsonSerializer.Deserialize<string[]>(req.RemovedFiles);
 

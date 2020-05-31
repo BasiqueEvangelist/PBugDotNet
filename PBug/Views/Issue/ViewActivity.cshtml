@@ -27,7 +27,8 @@
     }
 </div>
 <div class="underpanel">
-    @if (Context.UserCan("issue.editissue"))
+    @if (Context.UserCan("issue.editissue.all")
+     || (Context.UserCan("issue.editissue.own") && ((int?)Model.Issue.AuthorId??-1) == Context.User.GetUserId()))
     {
         <a asp-controller="Issue" asp-action="EditIssue" asp-route-id="@Model.Issue.Id">edit</a>
     }

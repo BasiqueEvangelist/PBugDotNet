@@ -9,7 +9,8 @@
     {
         <a asp-controller="KnowledgeBase" asp-action="ViewPage" asp-route-path="@Model.Path">view</a>
     }
-    @if (Context.UserCan("kb.editpage"))
+    @if (Context.UserCan("kb.editpage.all")
+     || (Context.UserCan("kb.editpage.own") && ((int?)Model.AuthorId??-1) == Context.User.GetUserId()))
     {
         <a asp-controller="KnowledgeBase" asp-action="EditPage" asp-route-path="@Model.Path">edit</a>
     }
@@ -32,7 +33,8 @@
                 <div class="date">Edited on @DateUtils.StringDate(comment.DateOfEdit)</div>
             }
             <div class="comment-underpanel">
-                @if (Context.UserCan("kb.editcomment"))
+               @if (Context.UserCan("kb.editcomment.all")
+                || (Context.UserCan("kb.editcomment.own") && ((int?)comment.AuthorId??-1) == Context.User.GetUserId()))
                 {
                     <a asp-controller="KnowledgeBase" asp-action="EditComment" asp-route-id="@comment.Id">edit</a>
                 }

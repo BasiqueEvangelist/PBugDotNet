@@ -12,7 +12,8 @@
     {
         <a asp-controller="KnowledgeBase" asp-action="ViewTalk" asp-route-path="@Model.Path">talk</a>
     }
-    @if (Context.UserCan("kb.editpage"))
+    @if (Context.UserCan("kb.editpage.all")
+     || (Context.UserCan("kb.editpage.own") && ((int?)Model.AuthorId??-1)  == Context.User.GetUserId()))
     {
         <a asp-controller="KnowledgeBase" asp-action="EditPage" asp-route-path="@Model.Path">edit</a>
     }

@@ -27,7 +27,8 @@
     }
 </div>
 <div class="underpanel">
-    @if (Context.UserCan("issue.editissue"))
+    @if (Context.UserCan("issue.editissue.all")
+     || (Context.UserCan("issue.editissue.own") && ((int?)Model.Issue.AuthorId??-1) == Context.User.GetUserId()))
     {
         <a asp-controller="Issue" asp-action="EditIssue" asp-route-id="@Model.Issue.Id">edit</a>
     }
@@ -69,7 +70,8 @@
                 <div class="date">Edited on @DateUtils.StringDate(post.DateOfEdit)</div>
             }
             <div class="comment-underpanel">
-                @if (Context.UserCan("issue.editpost"))
+                @if (Context.UserCan("issue.editpost.all")
+                 || (Context.UserCan("issue.editpost.own") && ((int?)post.AuthorId??-1) == Context.User.GetUserId()))
                 {
                     <a asp-controller="Issue" asp-action="EditPost" asp-route-id="@post.Id">edit</a>
                 }
