@@ -83,7 +83,7 @@
             {
                 <span class="blue">and with tags</span>
                 <span class="taglist">
-                    @foreach (var tag in cia.Tags.Split(","))
+                    @foreach (var tag in cia.Tags.Split(",", StringSplitOptions.RemoveEmptyEntries))
                     {
                         @:#@tag
                     }
@@ -132,14 +132,14 @@
             {
                 <span class="blue">changed tags from (</span>
                 <span class="taglist">
-                    @foreach (var tag in eia.OldTags.Split(','))
+                    @foreach (var tag in eia.OldTags.Split(',', StringSplitOptions.RemoveEmptyEntries))
                     {
                         <span class="tag">#@tag</span>
                     }
                 </span>
                 <span class="blue">) to (</span>
                 <span class="taglist">
-                    @foreach (var tag in eia.NewTags.Split(','))
+                    @foreach (var tag in eia.NewTags.Split(',',StringSplitOptions.RemoveEmptyEntries))
                     {
                         <span class="tag">#@tag</span>
                     }

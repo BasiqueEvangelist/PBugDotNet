@@ -25,7 +25,7 @@
     }
 </div>
 <div class="taglist">
-    @foreach (var tag in Model.Tags.Split(','))
+    @foreach (var tag in Model.Tags.Split(',', StringSplitOptions.RemoveEmptyEntries))
     {
         <span class="tag">#@tag</span>
     }
