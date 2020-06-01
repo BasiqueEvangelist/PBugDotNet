@@ -163,7 +163,7 @@
                 else
                 {
                     <span class="blue">changed assignee from </span>
-                    @eia.OldAssignee.FullName
+                    @(eia.OldAssignee?.FullName ?? "Anonymous")
                     <span class="blue"> to </span>
                     @eia.NewAssignee.FullName
                 }
