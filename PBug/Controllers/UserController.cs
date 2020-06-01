@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Http;
 using PBug.Utils;
+using PBug.Authentication;
 
 namespace PBug.Controllers
 {
@@ -197,6 +198,26 @@ namespace PBug.Controllers
             {
                 return RedirectToAction("Login", "User");
             }
+        }
+
+        [Route("/user/{username?}")]
+        [PBugPermission("user.profile")]
+        public async Task<IActionResult> Profile(string username)
+        {
+            var user = await Db.Users
+                .Include(x => x.IssueActivities)
+                    .ThenInclude(x => x.Author)
+                .Include(x => x.IssueActivities)
+                    .ThenInclude(x => x.Issue)
+                        .ThenInclude(x => x.Project)
+                .Include(x => x.IssueActivities)
+                    .ThenInclude(x => x.Issue)
+                        .ThenInclude(x => x.Assignee)
+                .SingleOrDefaultAsync(x => x.Username == username);
+            if (user == null)
+                return NotFound(); // FIXME: Redirect to user search page
+
+            return View(user);
         }
     }
 }

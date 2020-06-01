@@ -1,0 +1,22 @@
+@model User
+
+<h2 class="issue-name">@Model.FullName</h2>
+@Model.Bio
+<hr>
+<div class="taglist"></div>
+<div class="underpanel">
+    @if (Context.UserCan("issue.search"))
+    {
+        <a asp-controller="Issue" asp-action="Search" asp-route-q="author:@Model.Username">issues created</a>
+        <a asp-controller="Issue" asp-action="Search" asp-route-q="assignee:@Model.Username">issues assigned to</a>
+    }
+</div>
+@if (Context.UserCan("issue.news"))
+{
+    <ul class="issues-list">
+        @foreach (var activity in @Model.IssueActivities)
+        {
+            <partial name="IssueActivityPartial" model="activity" /> 
+        }
+    </ul>
+}

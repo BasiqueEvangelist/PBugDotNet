@@ -157,11 +157,14 @@
             {
                 if (eia.NewAssigneeId == null)
                 {
-                    <span class="blue">removed assignee</span>
+                    <span class="blue">removed assignee </span>
+                    @eia.OldAssignee.FullName
                 }
                 else
                 {
-                    <span class="blue">assigned </span>
+                    <span class="blue">changed assignee from </span>
+                    @eia.OldAssignee.FullName
+                    <span class="blue"> to </span>
                     @eia.NewAssignee.FullName
                 }
             }
