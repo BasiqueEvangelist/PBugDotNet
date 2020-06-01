@@ -256,6 +256,15 @@ namespace PBug.Controllers
                     string role = sub.Substring("role:".Length);
                     searchQuery = searchQuery.Where(x => x.Role.Name.Contains(role, StringComparison.InvariantCultureIgnoreCase));
                 }
+                else if (sub.StartsWith("!role:"))
+                {
+                    string role = sub.Substring("!role:".Length);
+                    searchQuery = searchQuery.Where(x => !x.Role.Name.Contains(role, StringComparison.InvariantCultureIgnoreCase));
+                }
+                else if (sub.StartsWith("!"))
+                    searchQuery = searchQuery.Where(x =>
+                        !x.FullName.Contains(sub.Substring(1), StringComparison.InvariantCultureIgnoreCase)
+                     && !x.Username.Contains(sub.Substring(1), StringComparison.InvariantCultureIgnoreCase));
                 else
                     searchQuery = searchQuery.Where(x =>
                         x.FullName.Contains(sub, StringComparison.InvariantCultureIgnoreCase)

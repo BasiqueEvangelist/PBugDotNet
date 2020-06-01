@@ -52,6 +52,11 @@ namespace PBug.Controllers
                     string tagName = sub.Substring(1);
                     searchQuery = searchQuery.Where(x => x.Issue.Tags.Contains(tagName));
                 }
+                else if (sub.StartsWith("!#"))
+                {
+                    string tagName = sub.Substring(2);
+                    searchQuery = searchQuery.Where(x => !x.Issue.Tags.Contains(tagName));
+                }
                 else if (sub.StartsWith("status:"))
                 {
                     IssueStatus status;
@@ -59,10 +64,22 @@ namespace PBug.Controllers
                         continue;
                     searchQuery = searchQuery.Where(x => x.Issue.Status == status);
                 }
+                else if (sub.StartsWith("!status:"))
+                {
+                    IssueStatus status;
+                    if (!Enum.TryParse(sub.Substring("!status:".Length), true, out status))
+                        continue;
+                    searchQuery = searchQuery.Where(x => x.Issue.Status != status);
+                }
                 else if (sub.StartsWith("project:"))
                 {
                     string projectId = sub.Substring("project:".Length);
                     searchQuery = searchQuery.Where(x => x.Issue.Project.ShortProjectId == projectId);
+                }
+                else if (sub.StartsWith("!project:"))
+                {
+                    string projectId = sub.Substring("!project:".Length);
+                    searchQuery = searchQuery.Where(x => x.Issue.Project.ShortProjectId != projectId);
                 }
                 else if (sub.StartsWith("assignee:"))
                 {
@@ -80,6 +97,22 @@ namespace PBug.Controllers
                         searchQuery = searchQuery.Where(x => x.Issue.Assignee != null && x.Issue.Assignee.Username == assigneeName);
                     }
                 }
+                else if (sub.StartsWith("!assignee:"))
+                {
+                    string assigneeName = sub.Substring("!assignee:".Length);
+                    if (assigneeName == "me")
+                    {
+                        searchQuery = searchQuery.Where(x => x.Issue.Assignee == null || x.Issue.Assignee.Id != HttpContext.User.GetUserId());
+                    }
+                    else if (assigneeName == "none")
+                    {
+                        searchQuery = searchQuery.Where(x => x.Issue.Assignee != null);
+                    }
+                    else
+                    {
+                        searchQuery = searchQuery.Where(x => x.Issue.Assignee == null || x.Issue.Assignee.Username != assigneeName);
+                    }
+                }
                 else if (sub.StartsWith("author:"))
                 {
                     string authorName = sub.Substring("author:".Length);
@@ -90,6 +123,18 @@ namespace PBug.Controllers
                     else
                     {
                         searchQuery = searchQuery.Where(x => x.Issue.Author.Username == authorName);
+                    }
+                }
+                else if (sub.StartsWith("!author:"))
+                {
+                    string authorName = sub.Substring("!author:".Length);
+                    if (authorName == "me")
+                    {
+                        searchQuery = searchQuery.Where(x => x.Issue.Author.Id != HttpContext.User.GetUserId());
+                    }
+                    else
+                    {
+                        searchQuery = searchQuery.Where(x => x.Issue.Author.Username != authorName);
                     }
                 }
                 else if (sub.StartsWith("actor:"))
@@ -104,6 +149,18 @@ namespace PBug.Controllers
                         searchQuery = searchQuery.Where(x => x.Issue.Author.Username == actorName);
                     }
                 }
+                else if (sub.StartsWith("!actor:"))
+                {
+                    string actorName = sub.Substring("!actor:".Length);
+                    if (actorName == "me")
+                    {
+                        searchQuery = searchQuery.Where(x => x.Author.Id != HttpContext.User.GetUserId());
+                    }
+                    else
+                    {
+                        searchQuery = searchQuery.Where(x => x.Issue.Author.Username != actorName);
+                    }
+                }
                 else if (sub.StartsWith("watched:"))
                 {
                     int userId = HttpContext.User.GetUserId();
@@ -116,6 +173,10 @@ namespace PBug.Controllers
                     string order = sub.Substring("order:".Length);
                     if (Regex.IsMatch(order, ".*asc.*"))
                         orderDescending = false;
+                }
+                else if (sub.StartsWith("!"))
+                {
+                    searchQuery = searchQuery.Where(x => !x.Issue.Name.Contains(sub.Substring(1)));
                 }
                 else
                 {
@@ -152,6 +213,11 @@ namespace PBug.Controllers
                     string tagName = sub.Substring(1);
                     searchQuery = searchQuery.Where(x => x.Tags.Contains(tagName));
                 }
+                else if (sub.StartsWith("!#"))
+                {
+                    string tagName = sub.Substring(2);
+                    searchQuery = searchQuery.Where(x => !x.Tags.Contains(tagName));
+                }
                 else if (sub.StartsWith("status:"))
                 {
                     IssueStatus status;
@@ -159,10 +225,22 @@ namespace PBug.Controllers
                         continue;
                     searchQuery = searchQuery.Where(x => x.Status == status);
                 }
+                else if (sub.StartsWith("!status:"))
+                {
+                    IssueStatus status;
+                    if (!Enum.TryParse(sub.Substring("!status:".Length), true, out status))
+                        continue;
+                    searchQuery = searchQuery.Where(x => x.Status != status);
+                }
                 else if (sub.StartsWith("project:"))
                 {
                     string projectId = sub.Substring("project:".Length);
                     searchQuery = searchQuery.Where(x => x.Project.ShortProjectId == projectId);
+                }
+                else if (sub.StartsWith("!project:"))
+                {
+                    string projectId = sub.Substring("!project:".Length);
+                    searchQuery = searchQuery.Where(x => x.Project.ShortProjectId != projectId);
                 }
                 else if (sub.StartsWith("assignee:"))
                 {
@@ -180,6 +258,22 @@ namespace PBug.Controllers
                         searchQuery = searchQuery.Where(x => x.Assignee != null && x.Assignee.Username == assigneeName);
                     }
                 }
+                else if (sub.StartsWith("!assignee:"))
+                {
+                    string assigneeName = sub.Substring("!assignee:".Length);
+                    if (assigneeName == "me")
+                    {
+                        searchQuery = searchQuery.Where(x => x.Assignee == null || x.Assignee.Id != HttpContext.User.GetUserId());
+                    }
+                    else if (assigneeName == "none")
+                    {
+                        searchQuery = searchQuery.Where(x => x.Assignee != null);
+                    }
+                    else
+                    {
+                        searchQuery = searchQuery.Where(x => x.Assignee == null || x.Assignee.Username != assigneeName);
+                    }
+                }
                 else if (sub.StartsWith("author:"))
                 {
                     string authorName = sub.Substring("author:".Length);
@@ -190,6 +284,18 @@ namespace PBug.Controllers
                     else
                     {
                         searchQuery = searchQuery.Where(x => x.Author.Username == authorName);
+                    }
+                }
+                else if (sub.StartsWith("!author:"))
+                {
+                    string authorName = sub.Substring("!author:".Length);
+                    if (authorName == "me")
+                    {
+                        searchQuery = searchQuery.Where(x => x.Author.Id != HttpContext.User.GetUserId());
+                    }
+                    else
+                    {
+                        searchQuery = searchQuery.Where(x => x.Author.Username != authorName);
                     }
                 }
                 else if (sub.StartsWith("watched:"))
@@ -204,6 +310,10 @@ namespace PBug.Controllers
                     string order = sub.Substring("order:".Length);
                     if (Regex.IsMatch(order, ".*asc.*"))
                         orderDescending = false;
+                }
+                else if (sub.StartsWith("!"))
+                {
+                    searchQuery = searchQuery.Where(x => !x.Name.Contains(sub.Substring(1)));
                 }
                 else
                 {
