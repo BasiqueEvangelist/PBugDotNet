@@ -13,12 +13,12 @@ using PBug.Utils;
 
 namespace PBug.Controllers
 {
-    public class AuthController : Controller
+    public class UserController : Controller
     {
         private readonly PBugContext Db;
-        private readonly ILogger<AuthController> logger;
+        private readonly ILogger<UserController> logger;
 
-        public AuthController(PBugContext db, ILogger<AuthController> log)
+        public UserController(PBugContext db, ILogger<UserController> log)
         {
             Db = db;
             logger = log;
@@ -195,7 +195,7 @@ namespace PBug.Controllers
             }
             catch (ArgumentException)
             {
-                return RedirectToAction("Login", "Auth");
+                return RedirectToAction("Login", "User");
             }
         }
     }

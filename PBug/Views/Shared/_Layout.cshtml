@@ -41,12 +41,12 @@
                     }
                     @if (User.IsAnonymous())
                     {
-                        <a asp-action="Login" asp-controller="Auth">Login</a>
-                        <a asp-action="Register" asp-controller="Auth">Register</a>
+                        <a asp-action="Login" asp-controller="User">Login</a>
+                        <a asp-action="Register" asp-controller="User">Register</a>
                     }
                     else
                     {
-                        <a asp-action="LogOut" asp-controller="Auth">Log Out</a>
+                        <a asp-action="LogOut" asp-controller="User">Log Out</a>
                     }
                 </nav>
             </div>
