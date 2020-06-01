@@ -37,6 +37,12 @@ namespace PBug.Controllers
                     .ThenInclude(x => x.Assignee)
                 .Include(x => x.Issue)
                     .ThenInclude(x => x.Project)
+                .Include(x => (x as CreateIssueActivity).Assignee)
+                .Include(x => (x as CreateIssueActivity).Project)
+                .Include(x => (x as EditIssueActivity).NewAssignee)
+                .Include(x => (x as EditIssueActivity).OldAssignee)
+                .Include(x => (x as EditIssueActivity).OldProject)
+                .Include(x => (x as EditIssueActivity).NewProject)
                 .Include(x => x.Author);
             bool orderDescending = true;
             foreach (string sub in q.Split(' ', StringSplitOptions.RemoveEmptyEntries))

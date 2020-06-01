@@ -215,6 +215,18 @@ namespace PBug.Controllers
                 .Include(x => x.IssueActivities)
                     .ThenInclude(x => x.Issue)
                         .ThenInclude(x => x.Assignee)
+                .Include(x => x.IssueActivities)
+                    .ThenInclude(x => (x as CreateIssueActivity).Assignee)
+                .Include(x => x.IssueActivities)
+                    .ThenInclude(x => (x as CreateIssueActivity).Project)
+                .Include(x => x.IssueActivities)
+                    .ThenInclude(x => (x as EditIssueActivity).NewAssignee)
+                .Include(x => x.IssueActivities)
+                    .ThenInclude(x => (x as EditIssueActivity).OldAssignee)
+                .Include(x => x.IssueActivities)
+                    .ThenInclude(x => (x as EditIssueActivity).OldProject)
+                .Include(x => x.IssueActivities)
+                    .ThenInclude(x => (x as EditIssueActivity).NewProject)
                 .SingleOrDefaultAsync(x => x.Username == username);
             if (user == null)
                 return RedirectToAction("Search");
