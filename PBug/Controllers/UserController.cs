@@ -11,6 +11,8 @@ using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Http;
 using PBug.Utils;
 using PBug.Authentication;
+using PBug.Models;
+using System.Text.RegularExpressions;
 
 namespace PBug.Controllers
 {
@@ -215,9 +217,47 @@ namespace PBug.Controllers
                         .ThenInclude(x => x.Assignee)
                 .SingleOrDefaultAsync(x => x.Username == username);
             if (user == null)
-                return NotFound(); // FIXME: Redirect to user search page
+                return RedirectToAction("Search");
 
             return View(user);
+        }
+
+        [Route("/users/")]
+        [PBugPermission("user.search")]
+        public async Task<IActionResult> Search([FromQuery] string q = "")
+        {
+            if (q == null) q = "";
+            UserSearchModel model = new UserSearchModel();
+            model.SearchString = q;
+            IQueryable<User> searchQuery = Db.Users;
+            bool orderDescending = true;
+            foreach (string sub in q.Split(' ', StringSplitOptions.RemoveEmptyEntries))
+            {
+                if (sub.StartsWith("order:"))
+                {
+                    string order = sub.Substring("order:".Length);
+                    if (Regex.IsMatch(order, ".*asc.*"))
+                        orderDescending = false;
+                }
+                else if (sub.StartsWith("role:"))
+                {
+                    string role = sub.Substring("role:".Length);
+                    searchQuery = searchQuery.Where(x => x.Role.Name.Contains(role, StringComparison.InvariantCultureIgnoreCase));
+                }
+                else
+                    searchQuery = searchQuery.Where(x =>
+                        x.FullName.Contains(sub, StringComparison.InvariantCultureIgnoreCase)
+                     || x.Username.Contains(sub, StringComparison.InvariantCultureIgnoreCase));
+            }
+            if (orderDescending)
+                searchQuery = searchQuery.OrderByDescending(x => x.Id);
+            else
+                searchQuery = searchQuery.OrderBy(x => x.Id);
+
+            model.FoundUsers = await searchQuery
+                .ToArrayAsync();
+
+            return View(model);
         }
     }
 }

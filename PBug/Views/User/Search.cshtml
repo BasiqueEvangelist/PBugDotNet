@@ -1,0 +1,49 @@
+@model UserSearchModel
+
+<div class="searchbox">
+    <form asp-controller="User" asp-action="Search" method="GET">
+        <input type="text" id="searchbox" placeholder="Search..." name="q" value="@Model.SearchString" class="search">
+        <input type="submit" class="submit-search" value="Search" style="background: url(@Url.Content("~/img/magnifying_glass.png")) no-repeat">
+    </form>
+    <div class="links">
+        order: 
+        <a href="javascript:void(0)" onclick="addthing('order:asc', ['order:desc'])">⇧</a>
+        <a href="javascript:void(0)" onclick="addthing('order:desc', ['order:asc'])">⇩</a>
+    </div>
+</div>
+
+<ul class="issues-list">
+    @foreach (var user in @Model.FoundUsers)
+    {
+        <li>
+            <a asp-controller="User" asp-action="Profile" asp-route-username="@(user.Username)">
+                @user.FullName (@user.Username)
+            </a>
+        </li>
+    }
+</ul>
+
+@section Scripts
+{
+    <script>
+        function addthing(thing,repl) {
+            if ($("#searchbox").val().indexOf(thing) === -1) {
+                for (var i = 0; i < repl.length; i++) {
+                    if ($("#searchbox").val().indexOf(repl[i]) !== -1) {
+                        $("#searchbox").val($("#searchbox").val().replace(repl[i],thing));
+                        return;
+                    }
+                }
+                $("#searchbox").val($("#searchbox").val() + " " + thing);
+            }
+            else {
+                var data = $("#searchbox").val();
+                data = data
+                    .replace(" " + thing, "")
+                    .replace(thing + " ", "")
+                    .replace(thing, "");
+                $("#searchbox").val(data);
+            }
+        }
+    </script>
+}
