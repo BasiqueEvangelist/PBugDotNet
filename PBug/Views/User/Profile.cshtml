@@ -10,6 +10,15 @@
         <a asp-controller="Issue" asp-action="Search" asp-route-q="author:@Model.Username">issues created</a>
         <a asp-controller="Issue" asp-action="Search" asp-route-q="assignee:@Model.Username">issues assigned to</a>
     }
+    @if (Context.UserCan("user.settings.all")
+     || (Context.UserCan("user.settings.own") && Model.Id == Context.User.GetUserId()))
+    {
+        <a asp-controller="User" asp-action="Settings" asp-route-username="@Model.Username">settings</a>
+    }
+    @if (Context.User.GetUserId() == Model.Id)
+    {
+        <a asp-controller="User" asp-action="ChangePassword">change password</a>
+    }
 </div>
 @if (Context.UserCan("issue.news"))
 {

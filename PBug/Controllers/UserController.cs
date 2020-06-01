@@ -259,5 +259,52 @@ namespace PBug.Controllers
 
             return View(model);
         }
+
+        [Route("/user/{username?}/settings")]
+        public async Task<IActionResult> Settings([FromRoute] string username)
+        {
+            if (!HttpContext.UserCan("user.settings.all")
+            && !(HttpContext.UserCan("user.settings.own") && username == HttpContext.User.GetClaim(ClaimTypes.NameIdentifier).Value))
+            {
+                if (HttpContext.User.IsAnonymous())
+                    return Challenge();
+                else
+                    return Forbid();
+            }
+
+            var user = await Db.Users
+                .SingleOrDefaultAsync(x => x.Username == username);
+
+            if (user == null)
+                return RedirectToAction("Search");
+
+            return View(user);
+        }
+
+        [Route("/user/{username?}/setbio")]
+        [HttpPost]
+        public async Task<IActionResult> SetBio([FromRoute] string username, SetBioRequest req)
+        {
+            if (!HttpContext.UserCan("user.settings.all")
+            && !(HttpContext.UserCan("user.settings.own") && username == HttpContext.User.GetClaim(ClaimTypes.NameIdentifier).Value))
+            {
+                if (HttpContext.User.IsAnonymous())
+                    return Challenge();
+                else
+                    return Forbid();
+            }
+
+            var user = await Db.Users
+                .SingleOrDefaultAsync(x => x.Username == username);
+            if (user == null)
+                return NotFound();
+            if (!ModelState.IsValid)
+                return View("Settings", user);
+
+            user.Bio = req.Text;
+
+            await Db.SaveChangesAsync();
+            return RedirectToAction("Settings", new { username = username });
+        }
     }
 }

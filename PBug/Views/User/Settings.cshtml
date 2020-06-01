@@ -1,0 +1,11 @@
+@model User
+
+<h2 class="issuename">Profile Settings</h2>
+
+<form asp-controller="User" asp-action="SetBio" asp-route-username="@Model.Username" method="POST" enctype="application/x-www-form-urlencoded">
+    <label for="biotext">Bio:</label>
+    <br>
+    <textarea id="biotext" name="text" cols="30">@Model.Bio</textarea>
+    <br>
+    <input type="submit" value="Set" class="submitpost">
+</form>

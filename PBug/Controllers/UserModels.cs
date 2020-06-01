@@ -40,4 +40,10 @@ namespace PBug.Controllers
         [StringLength(maximumLength: int.MaxValue, MinimumLength = 6)]
         public string NewPassword { get; set; }
     }
+    public class SetBioRequest
+    {
+        [BindProperty(Name = "text"), BindRequired]
+        [StringLength(1000)]
+        public string Text { get; set; }
+    }
 }
