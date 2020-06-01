@@ -69,6 +69,10 @@ namespace PBug.Controllers
                     if (!Regex.IsMatch(order, ".*asc.*"))
                         orderAscending = false;
                 }
+                else
+                {
+                    searchQuery = searchQuery.Where(x => x.Name.Contains(sub));
+                }
             }
             if (orderAscending)
                 searchQuery = searchQuery.OrderBy(x => x.Id);

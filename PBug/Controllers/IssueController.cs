@@ -111,6 +111,10 @@ namespace PBug.Controllers
                     if (Regex.IsMatch(order, ".*asc.*"))
                         orderDescending = false;
                 }
+                else
+                {
+                    searchQuery = searchQuery.Where(x => x.Issue.Name.Contains(sub));
+                }
             }
             if (orderDescending)
                 searchQuery = searchQuery.OrderByDescending(x => x.Id);
@@ -194,6 +198,10 @@ namespace PBug.Controllers
                     string order = sub.Substring("order:".Length);
                     if (Regex.IsMatch(order, ".*asc.*"))
                         orderDescending = false;
+                }
+                else
+                {
+                    searchQuery = searchQuery.Where(x => x.Name.Contains(sub));
                 }
             }
             if (orderDescending)
