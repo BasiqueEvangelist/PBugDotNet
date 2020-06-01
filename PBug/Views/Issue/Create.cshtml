@@ -11,7 +11,7 @@
     <select name="projectid" id="projectchooser" class="blueunderline" required>
         @foreach (var project in @Model.AllProjects)
         {
-            <option value="@(project.Id.ToString())">@project.Name</option>
+            <option value="@(project.Id.ToString())">@project.Name (@project.ShortProjectId)</option>
         }
     </select>
     <label for="assigneechooser">Assignee: </label>
@@ -19,7 +19,7 @@
         <option value="-1">Unassign</option>
         @foreach (var user in @Model.AllUsers)
         {
-            <option value="@(user.Id)">@user.FullName</option>
+            <option value="@(user.Id)">@user.FullName (@user.Username)</option>
         }
     </select>
     <input type="file" name="file[]" multiple>
