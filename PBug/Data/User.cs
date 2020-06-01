@@ -24,6 +24,7 @@ namespace PBug.Data
         public byte[] PasswordSalt { get; set; }
         public uint? RoleId { get; set; }
         public PasswordFunction PasswordFunc { get; set; }
+        public string Bio { get; set; }
 
         public virtual Role Role { get; set; }
         public virtual ICollection<InfopageComment> InfopageComments { get; set; }

@@ -700,6 +700,12 @@ namespace PBug.Data
                     .HasColumnName("passwordfunc")
                     .HasColumnType("tinyint(4)");
 
+                entity.Property(e => e.Bio)
+                    .IsRequired()
+                    .HasDefaultValue("")
+                    .HasColumnName("bio")
+                    .HasColumnType("text");
+
                 entity.HasOne(d => d.Role)
                     .WithMany(p => p.Users)
                     .HasForeignKey(d => d.RoleId)
