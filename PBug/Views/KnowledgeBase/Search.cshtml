@@ -16,10 +16,11 @@
     {
         <li>
             <a asp-controller="KnowledgeBase" asp-action="ViewPage" asp-route-path="@infopage.Path">
-                <div class="issuetag">
+                <div class="issue-tag">
+                    [/@infopage.Path]
                     <span class="assigneetext">Author: @(infopage.Author == null ? "Anonymous" : infopage.Author.FullName)</span>
-                    @infopage.Name
                 </div>
+                @infopage.Name
             </a>
         </li>
     }
