@@ -50,12 +50,12 @@ namespace PBug.Controllers
                 if (sub.StartsWith("#"))
                 {
                     string tagName = sub.Substring(1);
-                    searchQuery = searchQuery.Where(x => x.Issue.Tags.Contains(tagName));
+                    searchQuery = searchQuery.Where(x => x.Issue.Tags.Contains(tagName, StringComparison.InvariantCultureIgnoreCase));
                 }
                 else if (sub.StartsWith("!#"))
                 {
                     string tagName = sub.Substring(2);
-                    searchQuery = searchQuery.Where(x => !x.Issue.Tags.Contains(tagName));
+                    searchQuery = searchQuery.Where(x => !x.Issue.Tags.Contains(tagName, StringComparison.InvariantCultureIgnoreCase));
                 }
                 else if (sub.StartsWith("status:"))
                 {
@@ -176,11 +176,11 @@ namespace PBug.Controllers
                 }
                 else if (sub.StartsWith("!"))
                 {
-                    searchQuery = searchQuery.Where(x => !x.Issue.Name.Contains(sub.Substring(1)));
+                    searchQuery = searchQuery.Where(x => !x.Issue.Name.Contains(sub.Substring(1), StringComparison.InvariantCultureIgnoreCase));
                 }
                 else
                 {
-                    searchQuery = searchQuery.Where(x => x.Issue.Name.Contains(sub));
+                    searchQuery = searchQuery.Where(x => x.Issue.Name.Contains(sub, StringComparison.InvariantCultureIgnoreCase));
                 }
             }
             if (orderDescending)
@@ -211,12 +211,12 @@ namespace PBug.Controllers
                 if (sub.StartsWith("#"))
                 {
                     string tagName = sub.Substring(1);
-                    searchQuery = searchQuery.Where(x => x.Tags.Contains(tagName));
+                    searchQuery = searchQuery.Where(x => x.Tags.Contains(tagName, StringComparison.InvariantCultureIgnoreCase));
                 }
                 else if (sub.StartsWith("!#"))
                 {
                     string tagName = sub.Substring(2);
-                    searchQuery = searchQuery.Where(x => !x.Tags.Contains(tagName));
+                    searchQuery = searchQuery.Where(x => !x.Tags.Contains(tagName, StringComparison.InvariantCultureIgnoreCase));
                 }
                 else if (sub.StartsWith("status:"))
                 {
@@ -313,11 +313,11 @@ namespace PBug.Controllers
                 }
                 else if (sub.StartsWith("!"))
                 {
-                    searchQuery = searchQuery.Where(x => !x.Name.Contains(sub.Substring(1)));
+                    searchQuery = searchQuery.Where(x => !x.Name.Contains(sub.Substring(1), StringComparison.InvariantCultureIgnoreCase));
                 }
                 else
                 {
-                    searchQuery = searchQuery.Where(x => x.Name.Contains(sub));
+                    searchQuery = searchQuery.Where(x => x.Name.Contains(sub, StringComparison.InvariantCultureIgnoreCase));
                 }
             }
             if (orderDescending)
