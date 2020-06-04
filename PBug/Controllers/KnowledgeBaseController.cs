@@ -179,7 +179,7 @@ namespace PBug.Controllers
                 return Forbid();
 
             page.Name = req.Name;
-            page.Tags = req.Tags;
+            page.Tags = req.Tags ?? "";
             page.ContainedText = req.Text;
             page.Secrecy = (byte)req.Secrecy;
 
