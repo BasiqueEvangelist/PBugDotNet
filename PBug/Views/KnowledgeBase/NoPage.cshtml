@@ -1,0 +1,8 @@
+@model string
+
+<h2 style="text-align:center">404 Infopage Not Found</h2>
+An infopage with that path does not exist.
+@if (Context.UserCan("kb.create"))
+{
+    <a asp-controller="KnowledgeBase" asp-action="Create" asp-route-path="@Model">You can create it, however.</a>
+}

@@ -131,7 +131,7 @@ namespace PBug.Controllers
                 .SingleOrDefaultAsync(x => x.Path == path);
 
             if (page == null)
-                return RedirectToAction("Create", new { path = path });
+                return View("NoPage", path);
             if (!HttpContext.UserCan("kb.secrecy." + page.Secrecy.ToString()))
                 return Forbid();
 
