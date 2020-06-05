@@ -17,6 +17,7 @@ namespace PBug.Data
         public virtual DbSet<Infopage> Infopages { get; set; }
         public virtual DbSet<Invite> Invites { get; set; }
         public virtual DbSet<IssueActivity> IssueActivities { get; set; }
+        public virtual DbSet<KBActivity> KBActivities { get; set; }
         public virtual DbSet<IssueFile> IssueFiles { get; set; }
         public virtual DbSet<IssuePost> IssuePosts { get; set; }
         public virtual DbSet<Issue> Issues { get; set; }
@@ -405,6 +406,168 @@ namespace PBug.Data
                     .WithMany()
                     .HasForeignKey(d => d.PostId)
                     .HasConstraintName("issueactivities_postid_foreign");
+            });
+            #endregion
+
+            #region KBActivity
+            modelBuilder.Entity<KBActivity>(entity =>
+            {
+                entity.ToTable("kbactivities");
+
+                entity.HasDiscriminator(x => x.Type)
+                    .HasValue<CreatePageActivity>("createpage")
+                    .HasValue<EditPageActivity>("editpage")
+                    .HasValue<CommentActivity>("comment")
+                    .HasValue<EditCommentActivity>("editcomment");
+
+                entity.HasIndex(e => e.AuthorId)
+                    .HasName("kbactivities_authorid_foreign");
+
+                entity.HasIndex(e => e.InfopageId)
+                    .HasName("kbactivities_infopageid_foreign");
+
+                entity.Property(e => e.Id)
+                    .HasColumnName("id")
+                    .HasColumnType("int(10) unsigned");
+
+                entity.Property(e => e.AuthorId)
+                    .HasColumnName("authorid")
+                    .HasColumnType("int(10) unsigned");
+
+                entity.Property(e => e.DateOfOccurance)
+                    .HasColumnName("dateofoccurance")
+                    .HasColumnType("datetime");
+
+                entity.Property(e => e.InfopageId)
+                    .HasColumnName("infopageid")
+                    .HasColumnType("int(10) unsigned");
+
+                entity.Property(e => e.Type)
+                   .HasColumnName("type")
+                   .HasColumnType("varchar(30)");
+
+                entity.HasOne(d => d.Author)
+                    .WithMany(p => p.KBActivities)
+                    .HasForeignKey(d => d.AuthorId)
+                    .HasConstraintName("kbactivities_authorid_foreign");
+
+                entity.HasOne(d => d.Infopage)
+                    .WithMany(p => p.Activities)
+                    .HasForeignKey(d => d.InfopageId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("kbactivities_issueid_foreign");
+            });
+            #endregion
+
+            #region CreatePageActivity
+            modelBuilder.Entity<CreatePageActivity>(entity =>
+            {
+                entity.Property(e => e.ContainedText)
+                    .IsRequired()
+                    .HasColumnName("containedtext")
+                    .HasColumnType("text");
+
+                entity.Property(e => e.Name)
+                    .IsRequired()
+                    .HasColumnName("pagename")
+                    .HasColumnType("varchar(100)");
+
+                entity.Property(e => e.Tags)
+                    .IsRequired()
+                    .HasColumnName("pagetags")
+                    .HasColumnType("text");
+
+                entity.Property(e => e.Secrecy)
+                    .HasColumnName("secrecy")
+                    .HasColumnType("int(4)");
+            });
+            #endregion
+
+            #region EditPageActivity
+            modelBuilder.Entity<EditPageActivity>(entity =>
+            {
+                entity.Property(e => e.OldContainedText)
+                    .IsRequired()
+                    .HasColumnName("oldcontainedtext")
+                    .HasColumnType("text");
+
+                entity.Property(e => e.OldName)
+                    .IsRequired()
+                    .HasColumnName("oldpagename")
+                    .HasColumnType("varchar(100)");
+
+                entity.Property(e => e.OldTags)
+                    .IsRequired()
+                    .HasColumnName("oldpagetags")
+                    .HasColumnType("text");
+
+                entity.Property(e => e.OldSecrecy)
+                    .HasColumnName("oldsecrecy")
+                    .HasColumnType("int(4)");
+
+                entity.Property(e => e.NewContainedText)
+                    .IsRequired()
+                    .HasColumnName("newcontainedtext")
+                    .HasColumnType("text");
+
+                entity.Property(e => e.NewName)
+                    .IsRequired()
+                    .HasColumnName("newpagename")
+                    .HasColumnType("varchar(100)");
+
+                entity.Property(e => e.NewTags)
+                    .IsRequired()
+                    .HasColumnName("newpagetags")
+                    .HasColumnType("text");
+
+                entity.Property(e => e.NewSecrecy)
+                    .HasColumnName("newsecrecy")
+                    .HasColumnType("int(4)");
+            });
+            #endregion
+
+            #region CommentActivity
+            modelBuilder.Entity<CommentActivity>(entity =>
+            {
+                entity.Property(e => e.ContainedText)
+                    .IsRequired()
+                    .HasColumnName("containedtext")
+                    .HasColumnType("text");
+
+                entity.Property(e => e.CommentId)
+                    .IsRequired()
+                    .HasColumnName("commentid")
+                    .HasColumnType("int(10) unsigned");
+
+                entity.HasOne(d => d.Comment)
+                    .WithMany()
+                    .HasForeignKey(d => d.CommentId)
+                    .HasConstraintName("kbactivities_postid_foreign");
+            });
+            #endregion
+
+            #region EditCommentActivity
+            modelBuilder.Entity<EditCommentActivity>(entity =>
+            {
+                entity.Property(e => e.OldContainedText)
+                    .IsRequired()
+                    .HasColumnName("oldcontainedtext")
+                    .HasColumnType("text");
+
+                entity.Property(e => e.NewContainedText)
+                    .IsRequired()
+                    .HasColumnName("newcontainedtext")
+                    .HasColumnType("text");
+
+                entity.Property(e => e.CommentId)
+                    .IsRequired()
+                    .HasColumnName("commentid")
+                    .HasColumnType("int(10) unsigned");
+
+                entity.HasOne(d => d.Comment)
+                    .WithMany()
+                    .HasForeignKey(d => d.CommentId)
+                    .HasConstraintName("kbactivities_postid_foreign");
             });
             #endregion
 

@@ -24,6 +24,7 @@ namespace PBug.Data
         public virtual User Author { get; set; }
         public virtual User Editor { get; set; }
         public virtual ICollection<InfopageComment> Comments { get; set; }
+        public virtual ICollection<KBActivity> Activities { get; set; }
     }
     public enum KBSecrecy
     {

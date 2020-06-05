@@ -1,3 +1,6 @@
+using System.Globalization;
+using System.Net.Cache;
+using System.Net.Http.Headers;
 using System;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -89,7 +92,7 @@ namespace PBug.Controllers
         [PBugPermission("kb.create")]
         public IActionResult Create(string path)
         {
-            return View((object)path);
+            return View((object)(path.Replace("%2F", "/", true, CultureInfo.InvariantCulture)));
         }
 
         [Route("/kb/create/{*path}")]
@@ -98,27 +101,36 @@ namespace PBug.Controllers
         public async Task<IActionResult> Create([FromRoute] string path, CreatePageRequest req)
         {
             if (!ModelState.IsValid)
-                return View((object)path);
+                return View((object)(path.Replace("%2F", "/", true, CultureInfo.InvariantCulture)));
             if (!HttpContext.UserCan("kb.secrecy." + ((byte)req.Secrecy).ToString()))
                 return Forbid();
-            await Db.Infopages.AddAsync(new Infopage()
+            var page = (await Db.Infopages.AddAsync(new Infopage()
             {
                 AuthorId = HttpContext.User.IsAnonymous() ? null : new uint?((uint)HttpContext.User.GetUserId()),
                 EditorId = HttpContext.User.IsAnonymous() ? null : new uint?((uint)HttpContext.User.GetUserId()),
                 DateOfCreation = DateTime.UtcNow,
                 DateOfEdit = DateTime.UtcNow,
-                Path = path,
+                Path = path.Replace("%2F", "/", true, CultureInfo.InvariantCulture),
                 Name = req.Name,
-                Tags = req.Tags,
+                Tags = req.Tags ?? "",
                 ContainedText = req.Text,
                 Secrecy = (byte)req.Secrecy
+            })).Entity;
+
+            await Db.KBActivities.AddKBActivity(HttpContext, 0, new CreatePageActivity()
+            {
+                Infopage = page,
+                Name = req.Name,
+                ContainedText = req.Text,
+                Tags = req.Tags,
+                Secrecy = (int?)req.Secrecy
             });
 
             await Db.SaveChangesAsync();
 
             return RedirectToAction("ViewPage", new
             {
-                path = path
+                path = path.Replace("%2F", "/", true, CultureInfo.InvariantCulture)
             });
         }
 
@@ -128,10 +140,10 @@ namespace PBug.Controllers
         {
             Infopage page = await Db.Infopages
                 .Include(x => x.Author)
-                .SingleOrDefaultAsync(x => x.Path == path);
+                .SingleOrDefaultAsync(x => x.Path == path.Replace("%2F", "/", true, CultureInfo.InvariantCulture));
 
             if (page == null)
-                return View("NoPage", path);
+                return View("NoPage", path.Replace("%2F", "/", true, CultureInfo.InvariantCulture));
             if (!HttpContext.UserCan("kb.secrecy." + page.Secrecy.ToString()))
                 return Forbid();
 
@@ -142,7 +154,7 @@ namespace PBug.Controllers
         [HttpGet]
         public async Task<IActionResult> EditPage([FromRoute] string path)
         {
-            var page = await Db.Infopages.SingleAsync(x => x.Path == path);
+            var page = await Db.Infopages.SingleAsync(x => x.Path == path.Replace("%2F", "/", true, CultureInfo.InvariantCulture));
             if (!HttpContext.UserCan("kb.editpage.all")
             && !(HttpContext.UserCan("kb.editpage.own") && ((int?)page.AuthorId ?? -1) == HttpContext.User.GetUserId()))
             {
@@ -160,7 +172,7 @@ namespace PBug.Controllers
         [HttpPost]
         public async Task<IActionResult> EditPage([FromRoute] string path, CreatePageRequest req)
         {
-            Infopage page = await Db.Infopages.SingleAsync(x => x.Path == path);
+            Infopage page = await Db.Infopages.SingleAsync(x => x.Path == path.Replace("%2F", "/", true, CultureInfo.InvariantCulture));
             if (!HttpContext.UserCan("kb.editpage.all")
             && !(HttpContext.UserCan("kb.editpage.own") && ((int?)page.AuthorId ?? -1) == HttpContext.User.GetUserId()))
             {
@@ -178,6 +190,18 @@ namespace PBug.Controllers
             if (!HttpContext.UserCan("kb.secrecy." + ((byte)req.Secrecy).ToString()))
                 return Forbid();
 
+            await Db.KBActivities.AddKBActivity(HttpContext, page.Id, new EditPageActivity()
+            {
+                OldName = page.Name,
+                NewName = req.Name,
+                OldTags = page.Tags,
+                NewTags = req.Tags ?? "",
+                OldContainedText = page.ContainedText,
+                NewContainedText = req.Text,
+                OldSecrecy = page.Secrecy,
+                NewSecrecy = (byte)req.Secrecy
+            });
+
             page.Name = req.Name;
             page.Tags = req.Tags ?? "";
             page.ContainedText = req.Text;
@@ -185,7 +209,7 @@ namespace PBug.Controllers
 
             await Db.SaveChangesAsync();
 
-            return RedirectToAction("ViewPage", new { path = path });
+            return RedirectToAction("ViewPage", new { path = path.Replace("%2F", "/", true, CultureInfo.InvariantCulture) });
         }
 
         [Route("/kb/talk/{*path}")]
@@ -195,7 +219,20 @@ namespace PBug.Controllers
             var page = await Db.Infopages
                 .Include(x => x.Comments)
                     .ThenInclude(x => x.Author)
-                .SingleAsync(x => x.Path == path);
+                .SingleAsync(x => x.Path == path.Replace("%2F", "/", true, CultureInfo.InvariantCulture));
+            if (!HttpContext.UserCan("kb.secrecy." + page.Secrecy.ToString()))
+                return Forbid();
+            return View(page);
+        }
+
+        [Route("/kb/activity/{*path}")]
+        [PBugPermission("kb.activity")]
+        public async Task<IActionResult> ViewActivity([FromRoute] string path)
+        {
+            var page = await Db.Infopages
+                .Include(x => x.Activities)
+                    .ThenInclude(x => x.Author)
+                .SingleAsync(x => x.Path == path.Replace("%2F", "/", true, CultureInfo.InvariantCulture));
             if (!HttpContext.UserCan("kb.secrecy." + page.Secrecy.ToString()))
                 return Forbid();
             return View(page);
@@ -208,7 +245,7 @@ namespace PBug.Controllers
         {
             if (!ModelState.IsValid)
                 return Forbid();
-            var page = await Db.Infopages.SingleAsync(x => x.Path == path);
+            var page = await Db.Infopages.SingleAsync(x => x.Path == path.Replace("%2F", "/", true, CultureInfo.InvariantCulture));
             if (!HttpContext.UserCan("kb.secrecy." + page.Secrecy.ToString()))
                 return Forbid();
             InfopageComment post = (await Db.InfopageComments.AddAsync(new InfopageComment()
@@ -219,9 +256,15 @@ namespace PBug.Controllers
                 DateOfCreation = DateTime.UtcNow
             })).Entity;
 
+            await Db.KBActivities.AddKBActivity(HttpContext, page.Id, new CommentActivity()
+            {
+                Comment = post,
+                ContainedText = req.Text
+            });
+
             await Db.SaveChangesAsync();
 
-            return RedirectToAction("ViewTalk", "KnowledgeBase", new { path = path }, post.Id.ToString());
+            return RedirectToAction("ViewTalk", "KnowledgeBase", new { path = path.Replace("%2F", "/", true, CultureInfo.InvariantCulture) }, post.Id.ToString());
         }
 
         [Route("/kb/editcomment/{id}")]
@@ -268,6 +311,13 @@ namespace PBug.Controllers
             if (!HttpContext.UserCan("kb.secrecy." + comment.Infopage.Secrecy.ToString()))
                 return Forbid();
 
+            await Db.KBActivities.AddKBActivity(HttpContext, comment.Infopage.Id, new EditCommentActivity()
+            {
+                CommentId = id,
+                OldContainedText = comment.ContainedText,
+                NewContainedText = req.Text
+            });
+
             comment.DateOfEdit = DateTime.UtcNow;
             comment.ContainedText = req.Text;
 
@@ -279,10 +329,11 @@ namespace PBug.Controllers
         [PBugPermission("kb.deletepage")]
         public async Task<IActionResult> DeletePage([FromRoute] string path)
         {
-            Infopage page = await Db.Infopages.SingleAsync(x => x.Path == path);
+            Infopage page = await Db.Infopages.SingleAsync(x => x.Path == path.Replace("%2F", "/", true, CultureInfo.InvariantCulture));
             if (!HttpContext.UserCan("kb.secrecy." + page.Secrecy.ToString()))
                 return Forbid();
             await Db.Database.ExecuteSqlInterpolatedAsync($"delete from infopagecomments where infopageid = {page.Id}");
+            await Db.Database.ExecuteSqlInterpolatedAsync($"delete from kbactivities where infopageid = {page.Id}");
 
             Db.Infopages.Remove(page);
 

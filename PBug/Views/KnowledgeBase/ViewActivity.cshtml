@@ -1,5 +1,11 @@
 @model Infopage
 
+@section Stylesheets 
+{
+    @* FIXME: Somehow do highlighting. *@
+    @* <link rel="stylesheet" href="~/css/highlightstyles/default.css"> *@
+}
+
 <div class="issue-tag">/@Model.Path</div>
 <div class="issue-tag">
     <div class="date">Authored by @(Model.Author == null ? "Anonymous" : Model.Author.FullName) on @DateUtils.StringDate(Model.DateOfCreation)</div>
@@ -12,9 +18,9 @@
     {
         <a asp-controller="KnowledgeBase" asp-action="ViewTalk" asp-route-path="@Model.Path">talk</a>
     }
-    @if (Context.UserCan("kb.activity"))
+    @if (Context.UserCan("kb.view"))
     {
-        <a asp-controller="KnowledgeBase" asp-action="ViewActivity" asp-route-path="@Model.Path">activity</a>
+        <a asp-controller="KnowledgeBase" asp-action="ViewPage" asp-route-path="@Model.Path">view</a>
     }
     @if (Context.UserCan("kb.editpage.all")
      || (Context.UserCan("kb.editpage.own") && ((int?)Model.AuthorId??-1)  == Context.User.GetUserId()))
@@ -27,11 +33,26 @@
             <input type="submit" value="delete" class="buttonlink">
         </form>
     }
+    <br>
 </div>
 <div class="taglist">
-    @foreach (var tag in Model.Tags.Split(',', StringSplitOptions.RemoveEmptyEntries))
+    @if (Model.Tags.Length > 1)
     {
-        <span class="tag">#@tag</span>
+        @foreach (var tag in Model.Tags.Split(",", StringSplitOptions.RemoveEmptyEntries))
+        {
+            <span class="tag">#@tag</span>
+        }
     }
 </div>
-<div class="entry">@MarkdownHelper.ToHtml(Model.ContainedText)</div>
+
+<ul class="postlist">
+    @foreach (var activity in Model.Activities)
+    {
+        <partial name="KBActivityPartial" model="activity" /> 
+    }
+</ul>
+
+@section Scripts
+{
+    <script src="~/js/expandable.js"></script>
+}

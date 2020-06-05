@@ -1,0 +1,158 @@
+@model KBActivity
+
+@functions{
+    void DisplayDiff(List<DiffPlex.DiffBuilder.Model.DiffPiece> lines, bool isold) {
+        foreach (var row in lines)
+        {
+            if (!isold)
+                switch (row.Type)
+                {
+                    case DiffPlex.DiffBuilder.Model.ChangeType.Modified:
+                    case DiffPlex.DiffBuilder.Model.ChangeType.Inserted:
+                        <text><div class="smallmargin afteredit">@row.Text</div></text>
+                        break;
+                    case DiffPlex.DiffBuilder.Model.ChangeType.Deleted:
+                    case DiffPlex.DiffBuilder.Model.ChangeType.Imaginary:
+                        <text><div class="smallmargin filler"></div></text>
+                        break;
+                    case DiffPlex.DiffBuilder.Model.ChangeType.Unchanged:
+                        <text><div class="smallmargin">@row.Text</div></text>
+                        break;
+                    default:
+                        break;
+                }
+            else
+                switch (row.Type)
+                {
+                    case DiffPlex.DiffBuilder.Model.ChangeType.Modified:
+                    case DiffPlex.DiffBuilder.Model.ChangeType.Deleted:
+                        <text><div class="smallmargin beforeedit">@row.Text</div></text>
+                        break;
+                    case DiffPlex.DiffBuilder.Model.ChangeType.Inserted:
+                    case DiffPlex.DiffBuilder.Model.ChangeType.Imaginary:
+                        <text><div class="smallmargin filler"></div></text>
+                        break;
+                    case DiffPlex.DiffBuilder.Model.ChangeType.Unchanged:
+                        <text><div class="smallmargin">@row.Text</div></text>
+                        break;
+                    default:
+                        break;
+                }
+        }
+    }
+}
+
+<li class="entry">
+    <a asp-controller="KnowledgeBase" asp-action="ViewPage" asp-route-path="@Model.Infopage.Path">
+        <div class="from">
+            From
+            [/@Model.Infopage.Path]
+            <span class="issue">@Model.Infopage.Name</span>
+        </div>
+    </a>
+    <div class="date">@DateUtils.StringDate(Model.DateOfOccurance)</div>
+    @(Model.Author == null ? "Anonymous" : Model.Author.FullName)
+
+    @if (Model is CommentActivity ca)
+    {
+        <span class="showable-container">
+            <a href="javascript:void(0)" class="blue show-button underline">commented</a>
+            <div class="showable">
+                <div class="postborder">
+                    <pre><code class="smallmargin">@ca.ContainedText</code></pre>
+                </div>
+            </div>
+        </span>
+    }
+    else if (Model is CreatePageActivity cpa)
+    {
+        <span class="showable-container">
+            <a href="javascript:void(0)" class="blue show-button underline">has created page with text</a>
+            <table class="showable hide" style="width:100%">
+                <tr>
+                    <td class="postborder">
+                        <pre><code class="smallmargin">@cpa.ContainedText</code></pre>
+                    </td>
+                </tr>
+            </table>
+            @if (!string.IsNullOrWhiteSpace(cpa.Tags))
+            {
+                <span class="blue">and with tags</span>
+                <span class="taglist">
+                    @foreach (var tag in cpa.Tags.Split(",", StringSplitOptions.RemoveEmptyEntries))
+                    {
+                        @:#@tag
+                    }
+                </span>
+            }
+            <span class="blue">and with title</span>
+            @cpa.Name
+        </span>
+    }
+    else if (Model is EditCommentActivity eca)
+    {
+        var diff = DiffHelper.DiffText(eca.OldContainedText, eca.NewContainedText);
+
+        <span class="showable-container">
+            <a href="javascript:void(0)" class="blue show-button underline">has edited comment</a>
+            <table class="showable hide" style="width:100%">
+                <tr>
+                    <td class="postborder fleft" style="width:48%">
+                        <pre><code>@{DisplayDiff(diff.OldText.Lines, true);}</code></pre>
+                    </td>
+                    <td class="postborder fright" style="width:48%">
+                        <pre><code>@{DisplayDiff(diff.NewText.Lines, false);}</code></pre>
+                    </td>
+                </tr>
+            </table>
+        </span>        
+    }
+    else if (Model is EditPageActivity epa) {
+        <span class="showable-container">
+            @if (epa.OldContainedText != epa.NewContainedText) 
+            {
+                var diff = DiffHelper.DiffText(epa.OldContainedText, epa.NewContainedText);
+                <a href="javascript:void(0)" class="blue show-button underline">edited description</a>
+                <table class="showable hide" style="width:100%">
+                    <tr>
+                         <td class="postborder fleft" style="width:48%">
+                            <pre><code>@{DisplayDiff(diff.OldText.Lines, true);}</code></pre>
+                        </td>
+                        <td class="postborder fright" style="width:48%">
+                            <pre><code>@{DisplayDiff(diff.NewText.Lines, false);}</code></pre>
+                    </td>
+                    </tr>
+                </table>
+            }
+            @if (epa.OldTags != epa.NewTags)
+            {
+                <span class="blue">changed tags from (</span>
+                <span class="taglist">
+                    @foreach (var tag in epa.OldTags.Split(',', StringSplitOptions.RemoveEmptyEntries))
+                    {
+                        <span class="tag">#@tag</span>
+                    }
+                </span>
+                <span class="blue">) to (</span>
+                <span class="taglist">
+                    @foreach (var tag in epa.NewTags.Split(',',StringSplitOptions.RemoveEmptyEntries))
+                    {
+                        <span class="tag">#@tag</span>
+                    }
+                </span>
+                <span class="blue">)</span>
+            }
+            @if (epa.OldName != epa.NewName)
+            {
+                <span class="blue">changed title from</span>
+                @epa.OldName
+                <span class="blue">to</span>
+                @epa.NewName
+            }
+        </span>
+    }
+    else
+    {
+        <span class="blue">Invalid or unparsable activity</span>
+    }
+</li>

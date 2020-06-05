@@ -9,6 +9,10 @@
     {
         <a asp-controller="KnowledgeBase" asp-action="ViewPage" asp-route-path="@Model.Path">view</a>
     }
+    @if (Context.UserCan("kb.activity"))
+    {
+        <a asp-controller="KnowledgeBase" asp-action="ViewActivity" asp-route-path="@Model.Path">activity</a>
+    }
     @if (Context.UserCan("kb.editpage.all")
      || (Context.UserCan("kb.editpage.own") && ((int?)Model.AuthorId??-1) == Context.User.GetUserId()))
     {

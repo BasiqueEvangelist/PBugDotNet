@@ -367,7 +367,7 @@ namespace PBug.Controllers
                 Status = IssueStatus.Open
             })).Entity;
 
-            await Db.IssueActivities.AddActivity(HttpContext, 0, new CreateIssueActivity()
+            await Db.IssueActivities.AddIssueActivity(HttpContext, 0, new CreateIssueActivity()
             {
                 Issue = i,
                 Name = req.Name,
@@ -467,7 +467,7 @@ namespace PBug.Controllers
                 DateOfCreation = DateTime.UtcNow
             })).Entity;
 
-            await Db.IssueActivities.AddActivity(HttpContext, id, new PostActivity()
+            await Db.IssueActivities.AddIssueActivity(HttpContext, id, new PostActivity()
             {
                 ContainedText = req.Text,
                 Post = post
@@ -518,7 +518,7 @@ namespace PBug.Controllers
 
             if (post.ContainedText != req.Text)
             {
-                await Db.IssueActivities.AddActivity(HttpContext, id, new EditPostActivity()
+                await Db.IssueActivities.AddIssueActivity(HttpContext, id, new EditPostActivity()
                 {
                     OldContainedText = post.ContainedText,
                     NewContainedText = req.Text,
@@ -588,7 +588,7 @@ namespace PBug.Controllers
             || req.NewStatus != i.Status
             || HttpContext.Request.Form.Files.Count > 0)
             {
-                await Db.IssueActivities.AddActivity(HttpContext, id, new EditIssueActivity()
+                await Db.IssueActivities.AddIssueActivity(HttpContext, id, new EditIssueActivity()
                 {
                     OldName = i.Name,
                     NewName = req.NewName,

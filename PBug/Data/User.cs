@@ -31,6 +31,7 @@ namespace PBug.Data
         public virtual ICollection<Infopage> InfopagesAuthored { get; set; }
         public virtual ICollection<Infopage> InfopagesEdited { get; set; }
         public virtual ICollection<IssueActivity> IssueActivities { get; set; }
+        public virtual ICollection<KBActivity> KBActivities { get; set; }
         public virtual ICollection<IssuePost> IssuePosts { get; set; }
         public virtual ICollection<Issue> IssuesAssignedTo { get; set; }
         public virtual ICollection<Issue> IssuesAuthored { get; set; }
