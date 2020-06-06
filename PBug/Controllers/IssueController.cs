@@ -367,6 +367,13 @@ namespace PBug.Controllers
                 Status = IssueStatus.Open
             })).Entity;
 
+            if (!HttpContext.User.IsAnonymous())
+                await Db.AddAsync(new IssueWatcher()
+                {
+                    Issue = i,
+                    WatcherId = (uint)HttpContext.User.GetUserId()
+                });
+
             await Db.IssueActivities.AddIssueActivity(HttpContext, 0, new CreateIssueActivity()
             {
                 Issue = i,
