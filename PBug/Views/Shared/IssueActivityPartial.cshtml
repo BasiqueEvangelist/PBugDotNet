@@ -146,12 +146,12 @@
                 </span>
                 <span class="blue">)</span>
             }
-            @if (eia.OldDescription != eia.NewDescription)
+            @if (eia.OldName != eia.NewName)
             {
                 <span class="blue">changed title from</span>
-                @eia.OldDescription
+                @eia.OldName
                 <span class="blue">to</span>
-                @eia.NewDescription
+                @eia.NewName
             }
             @if (eia.OldAssigneeId != eia.NewAssigneeId)
             {
