@@ -61,6 +61,7 @@ namespace PBug
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            app.Use(new RequestTimeTracker().Use);
             app.UsePathBase(Configuration.GetValue<string>("PathBase"));
             if (env.IsDevelopment())
             {

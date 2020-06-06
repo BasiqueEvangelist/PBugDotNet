@@ -57,6 +57,10 @@
         @RenderBody()
     </div>
 
+    <footer>
+        Rendered in @(Context.Features.Get<RequestTimeFeature>().Stopwatch.Elapsed.TotalMilliseconds) ms
+    </footer>
+
     <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
     @RenderSection("Scripts", required: false)
 </body>
