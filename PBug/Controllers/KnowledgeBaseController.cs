@@ -122,7 +122,7 @@ namespace PBug.Controllers
                 Infopage = page,
                 Name = req.Name,
                 ContainedText = req.Text,
-                Tags = req.Tags,
+                Tags = req.Tags ?? "",
                 Secrecy = (int?)req.Secrecy
             });
 

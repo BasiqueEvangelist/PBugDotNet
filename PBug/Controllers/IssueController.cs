@@ -358,7 +358,7 @@ namespace PBug.Controllers
             Issue i = (await Db.Issues.AddAsync(new Issue()
             {
                 Name = req.Name,
-                Tags = req.Tags,
+                Tags = req.Tags ?? "",
                 Description = req.Description,
                 ProjectId = req.ProjectID,
                 AssigneeId = req.AssigneeID == -1 ? null : new uint?((uint)req.AssigneeID),
@@ -379,7 +379,7 @@ namespace PBug.Controllers
                 Issue = i,
                 Name = req.Name,
                 Description = req.Description,
-                Tags = req.Tags,
+                Tags = req.Tags ?? "",
                 ProjectId = req.ProjectID,
                 AssigneeId = req.AssigneeID == -1 ? null : new uint?((uint)req.AssigneeID),
             });
