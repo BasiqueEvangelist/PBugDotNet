@@ -12,8 +12,8 @@
         string statusName = Enum.GetName(typeof(PBug.Data.IssueStatus), Model.Issue.Status);
     }
     (<span class="issue-@(statusName.ToLower())-marker">@statusName</span>)
-    <span class="assigneetext">@(Model.Issue.Assignee != null ? ($"{Model.Issue.Assignee.FullName} ({Model.Issue.Assignee.Username})") : "No assignee")</span>
-    <span class="assigneetext" style="float:right">Author: @(Model.Issue.AuthorId == null ? "Anonymous" : ($"{Model.Issue.Author.FullName} ({Model.Issue.Author.Username})"))</span>
+    <span class="assigneetext">@(Model.Issue.Assignee != null ? RenderHelpers.ShowUser(Model.Issue.Assignee) : "No assignee")</span>
+    <span class="assigneetext" style="float:right">Author: @RenderHelpers.ShowUser(Model.Issue.Author)</span>
 </div>
 <h2 class="issue-name">@Model.Issue.Name</h2>
 <hr>

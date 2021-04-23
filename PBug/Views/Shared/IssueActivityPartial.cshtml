@@ -55,7 +55,7 @@
         </div>
     </a>
     <div class="date">@DateUtils.StringDate(Model.DateOfOccurance)</div>
-    @(Model.Author == null ? "Anonymous" : Model.Author.FullName)
+    @RenderHelpers.ShowUser(Model.Author)
 
     @if (Model is PostActivity pa)
     {
@@ -158,14 +158,14 @@
                 if (eia.NewAssigneeId == null)
                 {
                     <span class="blue">removed assignee </span>
-                    @eia.OldAssignee.FullName
+                    @RenderHelpers.ShowUser(eia.OldAssignee)
                 }
                 else
                 {
                     <span class="blue">changed assignee from </span>
-                    @(eia.OldAssignee?.FullName ?? "Anonymous")
+                    @RenderHelpers.ShowUser(eia.OldAssignee)
                     <span class="blue"> to </span>
-                    @eia.NewAssignee.FullName
+                    @RenderHelpers.ShowUser(eia.NewAssignee)
                 }
             }
             @if (eia.OldStatus != eia.NewStatus)

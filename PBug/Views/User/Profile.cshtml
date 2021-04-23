@@ -1,6 +1,6 @@
 @model User
 
-<h2 class="issue-name">@Model.FullName</h2>
+<h2 class="issue-name">@RenderHelpers.ShowUser(Model)</h2>
 @Model.Bio
 <hr>
 <div class="taglist"></div>

@@ -30,7 +30,7 @@
     @foreach (var comment in @Model.Comments)
     {
         <li class="entry" id="@comment.Id">
-            <div class="username">@(comment.Author == null ? "Anonymous" : comment.Author.FullName)</div>
+            <div class="entryauthor">@RenderHelpers.ShowUser(comment.Author)</div>
             <div class="date">@DateUtils.StringDate(comment.DateOfCreation)</div>
             @if (comment.DateOfEdit != null)
             {
@@ -52,7 +52,13 @@
     {
         <li class="entry">
             <form asp-controller="KnowledgeBase" asp-action="Comment" asp-route-path="@Model.Path" method="POST" enctype="application/x-www-form-urlencoded">
-                <div class="username">@User.GetClaim(ClaimTypes.Name).Value</div>
+                <div class="entryauthor">
+                    @User.GetClaim(ClaimTypes.Name).Value
+                    @if (!User.IsAnonymous())
+                    {
+                        <span class="username">@@@User.GetClaim(ClaimTypes.NameIdentifier).Value</span>
+                    }
+                </div>
                 <div class="date">@DateUtils.StringDate(DateTime.UtcNow)</div>
                 <textarea name="text" placeholder="Comment contents (Markdown)" class="submit-text"></textarea>
                 <br>

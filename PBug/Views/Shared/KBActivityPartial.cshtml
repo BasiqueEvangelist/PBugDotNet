@@ -51,7 +51,7 @@
         </div>
     </a>
     <div class="date">@DateUtils.StringDate(Model.DateOfOccurance)</div>
-    @(Model.Author == null ? "Anonymous" : Model.Author.FullName)
+    @RenderHelpers.ShowUser(Model.Author)
 
     @if (Model is CommentActivity ca)
     {

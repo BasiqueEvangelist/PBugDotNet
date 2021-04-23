@@ -5,7 +5,7 @@
 
 <form asp-controller="KnowledgeBase" asp-action="EditComment" asp-route-id="@Model.Id" method="POST" enctype="application/x-www-form-urlencoded">
     <div class="entry">
-        <div class="username">@(Model.Author == null ? "Anonymous" : Model.Author.FullName)</div>
+        <div class="entryauthor">@RenderHelpers.ShowUser(Model.Author)</div>
         <div class="date">@DateUtils.StringDate(Model.DateOfCreation)</div>
         @if (Model.DateOfEdit != null)
         {

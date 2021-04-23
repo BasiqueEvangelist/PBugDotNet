@@ -2,7 +2,7 @@
 
 <form asp-controller="Issue" asp-action="EditPost" asp-route-id="@Model.Id" method="POST" enctype="multipart/form-data">
     <div class="entry">
-        <div class="username">@(Model.Author == null ? "Anonymous" : Model.Author.FullName)</div>
+        <div class="entryauthor">@RenderHelpers.ShowUser(Model.Author)</div>
         <div class="date">@DateUtils.StringDate(Model.DateOfCreation)</div>
         @if (@Model.DateOfEdit != null)
         {

@@ -168,8 +168,12 @@ nav>a:hover {
 	color: #222;
 }
 
-.entry .username {
+.entryauthor {
 	font-size: 18px;
+}
+
+.username {
+	color: gray;
 }
 
 .entry .activitytag {

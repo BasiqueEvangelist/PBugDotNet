@@ -12,8 +12,8 @@
         string statusName = Enum.GetName(typeof(PBug.Data.IssueStatus), Model.Issue.Status);
     }
     (<span class="issue-@(statusName.ToLower())-marker">@statusName</span>)
-    <span class="assigneetext">@(Model.Issue.Assignee != null ? ($"{Model.Issue.Assignee.FullName} ({Model.Issue.Assignee.Username})") : "No assignee")</span>
-    <span class="assigneetext" style="float:right">Author: @(Model.Issue.AuthorId == null ? "Anonymous" : ($"{Model.Issue.Author.FullName} ({Model.Issue.Author.Username})"))</span>
+    <span class="assigneetext">@(Model.Issue.Assignee != null ? RenderHelpers.ShowUser(Model.Issue.Assignee) : "No assignee")</span>
+    <span class="assigneetext" style="float:right">Author: @RenderHelpers.ShowUser(Model.Issue.Author)</span>
 </div>
 <h2 class="issue-name">@Model.Issue.Name</h2>
 <hr>
@@ -63,7 +63,7 @@
     @foreach (var post in Model.Issue.Posts)
     {
         <li class="entry" id=@post.Id>
-            <div class="username">@(post.Author == null ? "Anonymous" : post.Author.FullName)</div>
+            <div class="entryauthor">@RenderHelpers.ShowUser(post.Author)</div>
             <div class="date">@DateUtils.StringDate(post.DateOfCreation)</div>
             @if (post.DateOfEdit != null)
             {
@@ -84,7 +84,13 @@
     {
         <li class="entry">
             <form asp-controller="Issue" asp-action="Post" asp-route-id="@Model.Issue.Id" method="POST" enctype="application/x-www-form-urlencoded">
-                <div class="username">@User.GetClaim(ClaimTypes.Name).Value</div>
+                <div class="entryauthor">
+                    @User.GetClaim(ClaimTypes.Name).Value
+                    @if (!User.IsAnonymous())
+                    {
+                        <span class="username">@@@User.GetClaim(ClaimTypes.NameIdentifier).Value</span>
+                    }
+                </div>
                 <div class="date">@DateUtils.StringDate(DateTime.UtcNow)</div>
                 <textarea name="text" placeholder="Post contents (Markdown)" class="submit-text"></textarea>
                 <br>

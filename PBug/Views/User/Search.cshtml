@@ -17,7 +17,7 @@
     {
         <li>
             <a asp-controller="User" asp-action="Profile" asp-route-username="@(user.Username)">
-                @user.FullName (@user.Username)
+                @RenderHelpers.ShowUser(user)
             </a>
         </li>
     }

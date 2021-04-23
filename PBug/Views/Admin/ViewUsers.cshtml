@@ -4,7 +4,7 @@
     @foreach (var user in Model.Users)
     {
         <li>
-            @user.FullName (@user.Username) (
+            @RenderHelpers.ShowUser(user) (
             @if (Context.UserCan("admin.setrole"))
             {
                 <form asp-controller="Admin" asp-action="SetRole" asp-route-id="@user.Id" method="POST" enctype="application/x-www-form-urlencoded" style="display:inline">
