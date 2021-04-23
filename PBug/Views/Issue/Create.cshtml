@@ -19,7 +19,7 @@
         <option value="-1">Unassign</option>
         @foreach (var user in @Model.AllUsers)
         {
-            <option value="@(user.Id)">@RenderHelpers.ShowUser(user)</option>
+            <option value="@(user.Id)">@RenderHelpers.ShowUser(user, false)</option>
         }
     </select>
     <input type="file" name="file[]" multiple>

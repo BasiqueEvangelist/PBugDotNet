@@ -29,11 +29,11 @@
         {
             @if (user.Id == Model.Issue.AssigneeId)
             {
-                <option value="@user.Id" selected>@RenderHelpers.ShowUser(user)</option>
+                <option value="@user.Id" selected>@RenderHelpers.ShowUser(user, false)</option>
             }
             else
             {
-                <option value="@user.Id">@RenderHelpers.ShowUser(user)</option>
+                <option value="@user.Id">@RenderHelpers.ShowUser(user, false)</option>
             }
         }
     </select>

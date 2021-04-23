@@ -101,6 +101,10 @@ div.page-main {
 	color: #222;
 }
 
+.issues-list .userlink {
+	display: inline;
+}
+
 .issues-list li {
 	padding: 5px;
 	padding-left: 10px;
@@ -466,4 +470,8 @@ label {
 
 a.show-button {
 	display: inline;
+}
+
+.userlink {
+	color: black;
 }

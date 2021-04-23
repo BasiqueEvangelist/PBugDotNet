@@ -30,7 +30,7 @@
                         string statusName = Enum.GetName(typeof(PBug.Data.IssueStatus), issue.Status);
                     }
                     (<span class="issue-@(statusName.ToLower())-marker">@statusName</span>)
-                    <span class="assigneetext">Assignee: @(issue.Assignee != null ? RenderHelpers.ShowUser(issue.Assignee) : "No assignee")</span>
+                    <span class="assigneetext">Assignee: @(issue.Assignee != null ? RenderHelpers.ShowUser(issue.Assignee, false) : "No assignee")</span>
                 </div>
                 @issue.Name
             </a>
