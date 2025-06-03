@@ -40,10 +40,10 @@ namespace PBug.Data
                 entity.ToTable("infopagecomments");
 
                 entity.HasIndex(e => e.AuthorId)
-                    .HasName("infopagecomments_authorid_foreign");
+                    .HasDatabaseName("infopagecomments_authorid_foreign");
 
                 entity.HasIndex(e => e.InfopageId)
-                    .HasName("infopagecomments_infopageid_foreign");
+                    .HasDatabaseName("infopagecomments_infopageid_foreign");
 
                 entity.Property(e => e.Id)
                     .HasColumnName("id")
@@ -87,13 +87,13 @@ namespace PBug.Data
                 entity.ToTable("infopages");
 
                 entity.HasIndex(e => e.AuthorId)
-                    .HasName("infopages_authorid_foreign");
+                    .HasDatabaseName("infopages_authorid_foreign");
 
                 entity.HasIndex(e => e.EditorId)
-                    .HasName("infopages_editorid_foreign");
+                    .HasDatabaseName("infopages_editorid_foreign");
 
                 entity.HasIndex(e => e.Path)
-                    .HasName("infopages_path_unique")
+                    .HasDatabaseName("infopages_path_unique")
                     .IsUnique();
 
                 entity.Property(e => e.Id)
@@ -158,10 +158,10 @@ namespace PBug.Data
                 entity.ToTable("invites");
 
                 entity.HasIndex(e => e.RoleId)
-                    .HasName("invites_roleid_foreign");
+                    .HasDatabaseName("invites_roleid_foreign");
 
                 entity.HasIndex(e => e.Uid)
-                    .HasName("invites_uid_unique")
+                    .HasDatabaseName("invites_uid_unique")
                     .IsUnique();
 
                 entity.Property(e => e.Id)
@@ -196,10 +196,10 @@ namespace PBug.Data
                     .HasValue<EditPostActivity>("editpost");
 
                 entity.HasIndex(e => e.AuthorId)
-                    .HasName("issueactivities_authorid_foreign");
+                    .HasDatabaseName("issueactivities_authorid_foreign");
 
                 entity.HasIndex(e => e.IssueId)
-                    .HasName("issueactivities_issueid_foreign");
+                    .HasDatabaseName("issueactivities_issueid_foreign");
 
                 entity.Property(e => e.Id)
                     .HasColumnName("id")
@@ -421,10 +421,10 @@ namespace PBug.Data
                     .HasValue<EditCommentActivity>("editcomment");
 
                 entity.HasIndex(e => e.AuthorId)
-                    .HasName("kbactivities_authorid_foreign");
+                    .HasDatabaseName("kbactivities_authorid_foreign");
 
                 entity.HasIndex(e => e.InfopageId)
-                    .HasName("kbactivities_infopageid_foreign");
+                    .HasDatabaseName("kbactivities_infopageid_foreign");
 
                 entity.Property(e => e.Id)
                     .HasColumnName("id")
@@ -577,7 +577,7 @@ namespace PBug.Data
                 entity.ToTable("issuefiles");
 
                 entity.HasIndex(e => e.IssueId)
-                    .HasName("issuefiles_issueid_foreign");
+                    .HasDatabaseName("issuefiles_issueid_foreign");
 
                 entity.Property(e => e.Id)
                     .HasColumnName("id")
@@ -609,10 +609,10 @@ namespace PBug.Data
                 entity.ToTable("issueposts");
 
                 entity.HasIndex(e => e.AuthorId)
-                    .HasName("issueposts_authorid_foreign");
+                    .HasDatabaseName("issueposts_authorid_foreign");
 
                 entity.HasIndex(e => e.IssueId)
-                    .HasName("issueposts_issueid_foreign");
+                    .HasDatabaseName("issueposts_issueid_foreign");
 
                 entity.Property(e => e.Id)
                     .HasColumnName("id")
@@ -658,13 +658,13 @@ namespace PBug.Data
                 entity.ToTable("issues");
 
                 entity.HasIndex(e => e.AssigneeId)
-                    .HasName("issues_assigneeid_foreign");
+                    .HasDatabaseName("issues_assigneeid_foreign");
 
                 entity.HasIndex(e => e.AuthorId)
-                    .HasName("issues_authorid_foreign");
+                    .HasDatabaseName("issues_authorid_foreign");
 
                 entity.HasIndex(e => e.ProjectId)
-                    .HasName("issues_projectid_foreign");
+                    .HasDatabaseName("issues_projectid_foreign");
 
                 entity.Property(e => e.Id)
                     .HasColumnName("id")
@@ -734,7 +734,7 @@ namespace PBug.Data
                 entity.ToTable("issuewatchers");
 
                 entity.HasIndex(e => e.IssueId)
-                    .HasName("issuewatchers_issueid_foreign");
+                    .HasDatabaseName("issuewatchers_issueid_foreign");
 
                 entity.Property(e => e.WatcherId)
                     .HasColumnName("watcherid")
@@ -764,10 +764,10 @@ namespace PBug.Data
                 entity.ToTable("projects");
 
                 entity.HasIndex(e => e.AuthorId)
-                    .HasName("projects_authorid_foreign");
+                    .HasDatabaseName("projects_authorid_foreign");
 
                 entity.HasIndex(e => e.ShortProjectId)
-                    .HasName("projects_shortprojectid_unique")
+                    .HasDatabaseName("projects_shortprojectid_unique")
                     .IsUnique();
 
                 entity.Property(e => e.Id)
@@ -800,7 +800,7 @@ namespace PBug.Data
                 entity.ToTable("roles");
 
                 entity.HasIndex(e => e.Name)
-                    .HasName("roles_name_unique")
+                    .HasDatabaseName("roles_name_unique")
                     .IsUnique();
 
                 entity.Property(e => e.Id)
@@ -824,10 +824,10 @@ namespace PBug.Data
                 entity.ToTable("users");
 
                 entity.HasIndex(e => e.RoleId)
-                    .HasName("users_roleid_foreign");
+                    .HasDatabaseName("users_roleid_foreign");
 
                 entity.HasIndex(e => e.Username)
-                    .HasName("users_username_unique")
+                    .HasDatabaseName("users_username_unique")
                     .IsUnique();
 
                 entity.Property(e => e.Id)

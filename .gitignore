@@ -5,3 +5,8 @@ files/
 appsettings*
 launchSettings.json
 systempass.txt
+
+*.DotSettings.user
+.idea
+
+systempass.txt

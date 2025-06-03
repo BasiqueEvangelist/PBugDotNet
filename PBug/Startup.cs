@@ -25,7 +25,8 @@ namespace PBug
 
         public void ConfigureServices(IServiceCollection services)
         {
-            DbContextOptionsBuilder<PBugContext> dbOpts = new DbContextOptionsBuilder<PBugContext>().UseMySql(Configuration.GetConnectionString("Database"));
+            var connectionString = Configuration.GetConnectionString("Database"); 
+            DbContextOptionsBuilder<PBugContext> dbOpts = new DbContextOptionsBuilder<PBugContext>().UseMySql(connectionString, ServerVersion.AutoDetect(connectionString));
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
                 .AddCookie(options =>
                 {
@@ -55,8 +56,7 @@ namespace PBug
 #else
                 ;
 #endif
-            services.AddDbContext<PBugContext>(options =>
-                options.UseMySql(Configuration.GetConnectionString("Database")));
+            services.AddDbContext<PBugContext>(options => options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -98,7 +98,8 @@ namespace PBug
 
             app.UseRouting();
             {
-                var dbOpts = new DbContextOptionsBuilder<PBugContext>().UseMySql(Configuration.GetConnectionString("Database"));
+                var connectionString = Configuration.GetConnectionString("Database"); 
+                var dbOpts = new DbContextOptionsBuilder<PBugContext>().UseMySql(connectionString, ServerVersion.AutoDetect(connectionString));
                 app.Use(new Func<RequestDelegate, RequestDelegate>(new PermissionLoadMiddleware(dbOpts.Options).Use));
             }
             app.UseAuthorization();

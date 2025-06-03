@@ -34,7 +34,9 @@ namespace PBug
                    .AddJsonFile("appsettings.json")
                    .Build();
 
-            var dbOpts = new DbContextOptionsBuilder<PBugContext>().UseMySql(cfg.GetConnectionString("Database"));
+            var connectionString = cfg.GetConnectionString("Database");
+
+            var dbOpts = new DbContextOptionsBuilder<PBugContext>().UseMySql(connectionString, ServerVersion.AutoDetect(connectionString));
             using (var ctx = new PBugContext(dbOpts.Options))
             {
                 var logger = LoggerFactory.Create(opts => opts.AddConsole()).CreateLogger("PBug");

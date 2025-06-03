@@ -9,8 +9,6 @@ namespace PBug.Utils
 {
     public static class AuthUtils
     {
-        private static RNGCryptoServiceProvider rng = new RNGCryptoServiceProvider();
-
         public static byte[] GetHashFor(string password, byte[] salt)
         {
             return KeyDerivation.Pbkdf2(password, salt, KeyDerivationPrf.HMACSHA512, 100000, 64);
@@ -18,9 +16,7 @@ namespace PBug.Utils
 
         public static byte[] GetRandomData(int length)
         {
-            byte[] data = new byte[length];
-            rng.GetBytes(data);
-            return data;
+            return RandomNumberGenerator.GetBytes(length);
         }
 
         public static Claim GetClaim(this ClaimsPrincipal principal, string id)
