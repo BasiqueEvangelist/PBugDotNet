@@ -48,14 +48,7 @@ namespace PBug
             services.AddSingleton<IAuthorizationHandler, PBugPermissionHandler>();
             services.AddSingleton<IAuthorizationPolicyProvider, PBugPermissionPolicyProvider>();
 
-
-
-            services.AddControllersWithViews()
-#if DEBUG
-                .AddRazorRuntimeCompilation();
-#else
-                ;
-#endif
+            services.AddControllersWithViews();
             services.AddDbContext<PBugContext>(options => options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
         }
 
