@@ -1,24 +1,22 @@
+using System;
 using System.Diagnostics;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 
-namespace PBug
+namespace PBug;
+
+public class RequestTimeFeature
 {
-    public class RequestTimeFeature
+    long startTs;
+    public TimeSpan Elapsed => Stopwatch.GetElapsedTime(startTs);
+    public RequestTimeFeature(long startTs)
     {
-        public Stopwatch Stopwatch { get; set; }
+        this.startTs = startTs;
     }
 
-    public class RequestTimeTracker
+    public static Task Middleware(HttpContext ctx, RequestDelegate next)
     {
-        public RequestDelegate Use(RequestDelegate next)
-        {
-            return async (ctx) =>
-            {
-                var f = new RequestTimeFeature() { Stopwatch = new Stopwatch() };
-                ctx.Features.Set(f);
-                f.Stopwatch.Start();
-                await next(ctx);
-            };
-        }
+        ctx.Features.Set(new RequestTimeFeature(Stopwatch.GetTimestamp()));
+        return next(ctx);
     }
 }
