@@ -72,7 +72,7 @@ namespace PBug
                     ctx.Add(system);
                     ctx.SaveChanges();
                     File.WriteAllText("systempass.txt", password);
-                    logger.LogInformation("Created database. System password is in systempass.txt", password);
+                    logger.LogInformation("Created database. System password is in systempass.txt");
                 }
             }
         }
