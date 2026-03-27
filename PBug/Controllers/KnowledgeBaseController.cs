@@ -1,16 +1,10 @@
 using System.Globalization;
-using System.Net.Cache;
-using System.Net.Http.Headers;
-using System;
-using System.Linq;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PBug.Authentication;
 using PBug.Data;
 using PBug.Models;
-using PBug.Utils;
 
 namespace PBug.Controllers
 {

@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace PBug.Data
+﻿namespace PBug.Data
 {
     public abstract partial class IssueActivity
     {

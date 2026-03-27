@@ -1,7 +1,4 @@
 using System.Security.Claims;
-using System;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -9,7 +6,6 @@ using PBug.Data;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Http;
-using PBug.Utils;
 using PBug.Authentication;
 using PBug.Models;
 using System.Text.RegularExpressions;

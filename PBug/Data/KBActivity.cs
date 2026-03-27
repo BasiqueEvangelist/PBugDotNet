@@ -1,5 +1,3 @@
-using System;
-
 namespace PBug.Data
 {
     public abstract partial class KBActivity

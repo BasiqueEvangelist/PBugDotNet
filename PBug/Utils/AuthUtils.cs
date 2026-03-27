@@ -1,4 +1,3 @@
-using System.Linq;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using Microsoft.AspNetCore.Cryptography.KeyDerivation;

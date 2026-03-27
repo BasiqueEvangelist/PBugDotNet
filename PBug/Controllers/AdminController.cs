@@ -1,11 +1,8 @@
-using System;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PBug.Authentication;
 using PBug.Data;
 using PBug.Models;
-using PBug.Utils;
 
 namespace PBug.Controllers
 {

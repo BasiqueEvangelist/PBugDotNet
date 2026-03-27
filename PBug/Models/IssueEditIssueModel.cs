@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using PBug.Data;
 
 namespace PBug.Models
