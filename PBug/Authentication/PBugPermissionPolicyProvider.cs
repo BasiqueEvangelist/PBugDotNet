@@ -25,5 +25,7 @@ namespace PBug.Authentication
             }
             return Fallback.GetPolicyAsync(policyName);
         }
+
+        public bool AllowsCachingPolicies => true;
     }
 }
