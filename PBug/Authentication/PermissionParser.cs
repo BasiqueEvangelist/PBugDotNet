@@ -1,37 +1,40 @@
-namespace PBug.Authentication
+using System;
+
+namespace PBug.Authentication;
+
+public static class PermissionParser
 {
-    public static class PermissionParser
+    public static int MAX_DEPTH = 16;
+
+    public static bool ProvePermission(ReadOnlySpan<char> permissions, ReadOnlySpan<char> requirement)
     {
-        public static bool ProvePermission(string permstring, string required)
+        Span<Range> permRanges = stackalloc Range[MAX_DEPTH];
+        Span<Range> reqRanges = stackalloc Range[MAX_DEPTH];
+        int reqRangesCount = requirement.Split(reqRanges, '.');
+
+        foreach (var range in permissions.Split(';'))
         {
-            foreach (var match in permstring.Split(";"))
+            var perm = permissions[range];
+            int permRangesCount = perm.Split(permRanges, '.');
+
+            if (reqRangesCount < permRangesCount)
+                continue;
+
+            int permIndex = 0, reqIndex = 0;
+
+            while (permIndex < permRangesCount)
             {
-                if (MatchPermission(match, required))
-                    return true;
+                var pi = perm[permRanges[permIndex]];
+                var ri = requirement[reqRanges[reqIndex]];
+
+                if (pi.SequenceEqual("**")) reqIndex = reqRangesCount - (permRangesCount - permIndex);
+                else if (!pi.SequenceEqual(ri) && !pi.SequenceEqual("*")) break;
+                permIndex++;
+                reqIndex++;
             }
-            return false;
-
+            if (reqIndex == reqRangesCount) return true;
         }
-
-        private static bool MatchPermission(string match, string required)
-        {
-            string[] matchwords = match.Split('.');
-            string[] reqwords = required.Split('.');
-
-            if (reqwords.Length < matchwords.Length)
-                return false;
-
-            int matchindex = 0, reqindex = 0;
-
-            while (matchindex < matchwords.Length)
-            {
-                if (matchwords[matchindex] == "**") reqindex = reqwords.Length - (matchwords.Length - matchindex);
-                else if (matchwords[matchindex] != reqwords[reqindex] && matchwords[matchindex] != "*") return false;
-                matchindex++;
-                reqindex++;
-            }
-
-            return reqindex == reqwords.Length;
-        }
+        return false;
     }
+
 }
