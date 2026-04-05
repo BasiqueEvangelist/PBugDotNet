@@ -34,7 +34,7 @@ namespace PBug.Utils
         }
         public static bool UserCan(this HttpContext ctx, string permission)
         {
-            return PermissionParser.ProvePermission(ctx.Features.Get<PermissionData>().PermissionText, permission);
+            return Permissions.CheckPermissions(ctx.Features.Get<PermissionData>().PermissionText, permission);
         }
     }
 }

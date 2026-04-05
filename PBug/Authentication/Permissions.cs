@@ -1,10 +1,15 @@
 namespace PBug.Authentication;
 
-public static class PermissionParser
+public static class Permissions
 {
-    public static int MAX_DEPTH = 16;
+    public const int MAX_DEPTH = 16;
 
-    public static bool ProvePermission(ReadOnlySpan<char> permissions, ReadOnlySpan<char> requirement)
+    /// <summary>
+    /// Check if provided <paramref name="permissions"/> (one or more) fulfill <paramref name="requirement"/>.
+    /// </summary>
+    /// <param name="permissions">One ore more permissions, separated by semicolons.</param>
+    /// <param name="requirement">One permission requirement</param>
+    public static bool CheckPermissions(ReadOnlySpan<char> permissions, ReadOnlySpan<char> requirement)
     {
         Span<Range> permRanges = stackalloc Range[MAX_DEPTH];
         Span<Range> reqRanges = stackalloc Range[MAX_DEPTH];
@@ -14,7 +19,7 @@ public static class PermissionParser
         {
             var perm = permissions[range];
             int permRangesCount = perm.Split(permRanges, '.');
-
+            
             if (reqRangesCount < permRangesCount)
                 continue;
 
@@ -34,5 +39,4 @@ public static class PermissionParser
         }
         return false;
     }
-
 }

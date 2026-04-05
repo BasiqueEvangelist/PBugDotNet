@@ -1,23 +1,10 @@
 using Microsoft.AspNetCore.Authorization;
 
-namespace PBug.Authentication
+namespace PBug.Authentication;
+
+public class PBugPermissionAttribute : AuthorizeAttribute
 {
-    public class PBugPermissionAttribute : AuthorizeAttribute
-    {
-        public const string POLICY_PREFIX = "PBugPermission";
+    public const string POLICY_PREFIX = "permission://";
 
-        public PBugPermissionAttribute(string permission) { Permission = permission; }
-
-        public string Permission
-        {
-            get
-            {
-                return Policy.Substring(POLICY_PREFIX.Length);
-            }
-            set
-            {
-                Policy = POLICY_PREFIX + value;
-            }
-        }
-    }
+    public PBugPermissionAttribute(string permission) => Policy = POLICY_PREFIX + permission;
 }
