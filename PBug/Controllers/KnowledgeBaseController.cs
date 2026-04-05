@@ -23,7 +23,7 @@ namespace PBug.Controllers
         }
 
         [Route("/kb/search")]
-        [PBugPermission("kb.search")]
+        [Permission("kb.search")]
         public async Task<IActionResult> Search([FromQuery] string q)
         {
             if (q == null) q = "";
@@ -83,7 +83,7 @@ namespace PBug.Controllers
 
         [Route("/kb/create/{*path}")]
         [HttpGet]
-        [PBugPermission("kb.create")]
+        [Permission("kb.create")]
         public IActionResult Create(string path)
         {
             return View((object)(path.Replace("%2F", "/", true, CultureInfo.InvariantCulture)));
@@ -91,7 +91,7 @@ namespace PBug.Controllers
 
         [Route("/kb/create/{*path}")]
         [HttpPost]
-        [PBugPermission("kb.create")]
+        [Permission("kb.create")]
         public async Task<IActionResult> Create([FromRoute] string path, CreatePageRequest req)
         {
             if (!ModelState.IsValid)
@@ -129,7 +129,7 @@ namespace PBug.Controllers
         }
 
         [Route("/kb/view/{*path}")]
-        [PBugPermission("kb.view")]
+        [Permission("kb.view")]
         public async Task<IActionResult> ViewPage([FromRoute] string path)
         {
             Infopage page = await Db.Infopages
@@ -207,7 +207,7 @@ namespace PBug.Controllers
         }
 
         [Route("/kb/talk/{*path}")]
-        [PBugPermission("kb.talk")]
+        [Permission("kb.talk")]
         public async Task<IActionResult> ViewTalk([FromRoute] string path)
         {
             var page = await Db.Infopages
@@ -220,7 +220,7 @@ namespace PBug.Controllers
         }
 
         [Route("/kb/activity/{*path}")]
-        [PBugPermission("kb.activity")]
+        [Permission("kb.activity")]
         public async Task<IActionResult> ViewActivity([FromRoute] string path)
         {
             var page = await Db.Infopages
@@ -234,7 +234,7 @@ namespace PBug.Controllers
 
         [Route("/kb/comment/{*path}")]
         [HttpPost]
-        [PBugPermission("kb.comment")]
+        [Permission("kb.comment")]
         public async Task<IActionResult> Comment([FromRoute] string path, CommentPostRequest req)
         {
             if (!ModelState.IsValid)
@@ -320,7 +320,7 @@ namespace PBug.Controllers
         }
 
         [Route("/kb/delete/{*path}")]
-        [PBugPermission("kb.deletepage")]
+        [Permission("kb.deletepage")]
         public async Task<IActionResult> DeletePage([FromRoute] string path)
         {
             Infopage page = await Db.Infopages.SingleAsync(x => x.Path == path.Replace("%2F", "/", true, CultureInfo.InvariantCulture));

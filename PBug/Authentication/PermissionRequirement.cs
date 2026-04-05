@@ -2,11 +2,11 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace PBug.Authentication;
 
-public class PBugPermissionRequirement : IAuthorizationRequirement
+public class PermissionRequirement : IAuthorizationRequirement
 {
     public string RequiredPermission { get; }
 
-    public PBugPermissionRequirement(string permtext)
+    public PermissionRequirement(string permtext)
     {
         RequiredPermission = permtext;
     }

@@ -16,7 +16,7 @@ namespace PBug.Controllers
         }
 
         [Route("/file/{uid?}")]
-        [PBugPermission("issue.view")]
+        [Permission("issue.view")]
         public async Task<IActionResult> Download([FromRoute] string uid)
         {
             if (Path.GetFileName(uid) != uid)

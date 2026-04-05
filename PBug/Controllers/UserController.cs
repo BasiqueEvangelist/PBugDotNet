@@ -199,7 +199,7 @@ namespace PBug.Controllers
         }
 
         [Route("/user/{username?}")]
-        [PBugPermission("user.profile")]
+        [Permission("user.profile")]
         public async Task<IActionResult> Profile(string username)
         {
             var user = await Db.Users
@@ -231,7 +231,7 @@ namespace PBug.Controllers
         }
 
         [Route("/users/")]
-        [PBugPermission("user.search")]
+        [Permission("user.search")]
         public async Task<IActionResult> Search([FromQuery] string q = "")
         {
             if (q == null) q = "";

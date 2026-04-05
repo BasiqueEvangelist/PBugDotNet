@@ -21,7 +21,7 @@ namespace PBug.Controllers
 
         [Route("/")]
         [Route("/news/")]
-        [PBugPermission("issue.news")]
+        [Permission("issue.news")]
         public async Task<IActionResult> News([FromQuery] string q = "watched:yes")
         {
             if (q == null) q = "";
@@ -191,7 +191,7 @@ namespace PBug.Controllers
 
         [Route("/issues/")]
         [Route("/issues/search/")]
-        [PBugPermission("issue.search")]
+        [Permission("issue.search")]
         public async Task<IActionResult> Search([FromQuery] string q = "watched:yes")
         {
             if (q == null) q = "";
@@ -327,7 +327,7 @@ namespace PBug.Controllers
         }
 
         [Route("/issues/create")]
-        [PBugPermission("issue.create")]
+        [Permission("issue.create")]
         [HttpGet]
         public async Task<IActionResult> Create()
         {
@@ -339,7 +339,7 @@ namespace PBug.Controllers
         }
 
         [Route("/issues/create")]
-        [PBugPermission("issue.create")]
+        [Permission("issue.create")]
         [HttpPost]
         public async Task<IActionResult> Create(CreateIssueRequest req)
         {
@@ -407,7 +407,7 @@ namespace PBug.Controllers
         }
 
         [Route("/issues/{id?}")]
-        [PBugPermission("issue.view")]
+        [Permission("issue.view")]
         public async Task<IActionResult> ViewTalk([FromRoute] int id)
         {
             Issue i = await Db.Issues
@@ -426,7 +426,7 @@ namespace PBug.Controllers
         }
 
         [Route("/issues/{id?}/activity")]
-        [PBugPermission("issue.activity")]
+        [Permission("issue.activity")]
         public async Task<IActionResult> ViewActivity([FromRoute] int id)
         {
             await Db.IssueActivities
@@ -454,7 +454,7 @@ namespace PBug.Controllers
         }
 
         [Route("/issues/{id?}/post")]
-        [PBugPermission("issue.post")]
+        [Permission("issue.post")]
         [HttpPost]
         public async Task<IActionResult> Post([FromRoute] uint id, CommentPostRequest req)
         {
@@ -651,7 +651,7 @@ namespace PBug.Controllers
         }
 
         [Route("/issues/{id?}/watch")]
-        [PBugPermission("issue.watch")]
+        [Permission("issue.watch")]
         [HttpPost]
         public async Task<IActionResult> ToggleWatch([FromRoute] uint id)
         {
@@ -674,7 +674,7 @@ namespace PBug.Controllers
         }
 
         [Route("/issues/posts/{id?}/delete")]
-        [PBugPermission("issue.deleteissue")]
+        [Permission("issue.deleteissue")]
         [HttpPost]
         public async Task<IActionResult> DeleteIssue([FromRoute] uint id)
         {

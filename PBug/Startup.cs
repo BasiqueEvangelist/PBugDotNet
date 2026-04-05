@@ -56,8 +56,8 @@ public class Startup
 
         services.AddAuthorization();
         services.AddHttpContextAccessor();
-        services.AddSingleton<IAuthorizationHandler, PBugPermissionHandler>();
-        services.AddSingleton<IAuthorizationPolicyProvider, PBugPermissionPolicyProvider>();
+        services.AddSingleton<IAuthorizationHandler, PermissionHandler>();
+        services.AddSingleton<IAuthorizationPolicyProvider, PermissionPolicyProvider>();
 
         services.AddControllersWithViews();
     }

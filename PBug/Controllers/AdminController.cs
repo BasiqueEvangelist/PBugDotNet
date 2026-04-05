@@ -21,7 +21,7 @@ namespace PBug.Controllers
             return View();
         }
 
-        [PBugPermission("admin.createproject")]
+        [Permission("admin.createproject")]
         [Route("/admin/createproject")]
         [HttpGet]
         public IActionResult CreateProject()
@@ -29,7 +29,7 @@ namespace PBug.Controllers
             return View();
         }
 
-        [PBugPermission("admin.createproject")]
+        [Permission("admin.createproject")]
         [Route("/admin/createproject")]
         [HttpPost]
         public async Task<IActionResult> CreateProject(CreateProjectRequest req)
@@ -46,7 +46,7 @@ namespace PBug.Controllers
             return RedirectToAction("Main", "Admin");
         }
 
-        [PBugPermission("admin.users")]
+        [Permission("admin.users")]
         [Route("/admin/viewusers")]
         public async Task<IActionResult> ViewUsers()
         {
@@ -60,7 +60,7 @@ namespace PBug.Controllers
             });
         }
 
-        [PBugPermission("admin.setrole")]
+        [Permission("admin.setrole")]
         [HttpPost]
         [Route("/admin/setrole/{id?}")]
         public async Task<IActionResult> SetRole(SetRoleRequest req)
@@ -72,7 +72,7 @@ namespace PBug.Controllers
             await Db.SaveChangesAsync();
             return RedirectToAction("ViewUsers");
         }
-        [PBugPermission("admin.viewinvites")]
+        [Permission("admin.viewinvites")]
         [Route("/admin/invites")]
         public async Task<IActionResult> ViewInvites()
         {
@@ -84,7 +84,7 @@ namespace PBug.Controllers
                 Roles = await Db.Roles.ToArrayAsync()
             });
         }
-        [PBugPermission("admin.createinvite")]
+        [Permission("admin.createinvite")]
         [Route("/admin/invites/create")]
         [HttpPost]
         public async Task<IActionResult> CreateInvite(CreateInviteRequest req)
@@ -99,14 +99,14 @@ namespace PBug.Controllers
             await Db.SaveChangesAsync();
             return RedirectToAction("ViewInvites");
         }
-        [PBugPermission("admin.viewroles")]
+        [Permission("admin.viewroles")]
         [Route("/admin/roles")]
         public async Task<IActionResult> ViewRoles()
         {
             return View(await Db.Roles.ToArrayAsync());
         }
 
-        [PBugPermission("admin.createrole")]
+        [Permission("admin.createrole")]
         [Route("/admin/roles/create")]
         [HttpPost]
         public async Task<IActionResult> CreateRole(CreateRoleRequest req)
@@ -122,7 +122,7 @@ namespace PBug.Controllers
             return RedirectToAction("ViewRoles");
         }
 
-        [PBugPermission("admin.editrole")]
+        [Permission("admin.editrole")]
         [Route("/admin/roles/edit/{id?}")]
         [HttpPost]
         public async Task<IActionResult> EditRole([FromRoute] uint id, EditRoleRequest req)
@@ -135,7 +135,7 @@ namespace PBug.Controllers
             return RedirectToAction("ViewRoles");
         }
 
-        [PBugPermission("admin.deleterole")]
+        [Permission("admin.deleterole")]
         [Route("/admin/roles/delete/{id?}")]
         [HttpPost]
         public async Task<IActionResult> DeleteRole(uint id)
@@ -148,7 +148,7 @@ namespace PBug.Controllers
             return RedirectToAction("ViewRoles");
         }
 
-        [PBugPermission("admin.deleteinvite")]
+        [Permission("admin.deleteinvite")]
         [Route("/admin/invites/delete/{id?}")]
         [HttpPost]
         public async Task<IActionResult> DeleteInvite(uint id)

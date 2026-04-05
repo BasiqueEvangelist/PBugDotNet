@@ -3,16 +3,16 @@ using Microsoft.AspNetCore.Http;
 
 namespace PBug.Authentication;
 
-public class PBugPermissionHandler : AuthorizationHandler<PBugPermissionRequirement>
+public class PermissionHandler : AuthorizationHandler<PermissionRequirement>
 {
     private readonly IHttpContextAccessor _httpctx;
 
-    public PBugPermissionHandler(IHttpContextAccessor httpctx)
+    public PermissionHandler(IHttpContextAccessor httpctx)
     {
         _httpctx = httpctx;
     }
 
-    protected override Task HandleRequirementAsync(AuthorizationHandlerContext context, PBugPermissionRequirement requirement)
+    protected override Task HandleRequirementAsync(AuthorizationHandlerContext context, PermissionRequirement requirement)
     {
         PermissionData data = _httpctx.HttpContext.Features.Get<PermissionData>();
         if (Permissions.CheckPermissions(data.PermissionText, requirement.RequiredPermission))
