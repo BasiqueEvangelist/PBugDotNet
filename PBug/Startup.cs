@@ -62,9 +62,7 @@ namespace PBug
             else
             {
                 app.UseExceptionHandler("/error");
-                // app.UseHsts();
             }
-            app.UseHttpsRedirection();
             app.UseStaticFiles();
 
             app.UseStatusCodePagesWithReExecute("/{0}");
