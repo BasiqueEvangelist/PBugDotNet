@@ -18,7 +18,6 @@ public class PermissionLoadMiddleware
     public async Task InvokeAsync(HttpContext ctx)
     {
         Role role;
-        using (var _ = TimerGuard.PrintMillis())
         using (var db = await dbFactory.CreateDbContextAsync())
         {
             if (ctx.User.IsAnonymous())
