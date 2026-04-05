@@ -1,40 +1,42 @@
-using System.Linq;
 using Microsoft.AspNetCore.Http;
-using PBug.Data;
-using PBug.Utils;
 using Microsoft.EntityFrameworkCore;
+using PBug.Data;
+using System.Security.Claims;
 
-namespace PBug.Authentication
+namespace PBug.Authentication;
+
+public class PermissionLoadMiddleware
 {
-    public class PermissionLoadMiddleware
+    private readonly RequestDelegate next;
+    IDbContextFactory<PBugContext> dbFactory;
+    public PermissionLoadMiddleware(RequestDelegate next, IDbContextFactory<PBugContext> dbFactory)
     {
-        DbContextOptions<PBugContext> dbopts;
-        public PermissionLoadMiddleware(DbContextOptions<PBugContext> dbopts)
-        {
-            this.dbopts = dbopts;
-        }
-        public RequestDelegate Use(RequestDelegate next)
-        {
-            return async (HttpContext ctx) =>
-            {
-                Role role;
-                using (PBugContext db = new PBugContext(dbopts))
-                    if (ctx.User.IsAnonymous())
-                        role = await db.Roles.FindAsync(1u);
-                    else
-                        role = await db.Users.Where(x => x.Id == ctx.User.GetUserId()).Select(x => x.Role).FirstAsync();
-                ctx.Features.Set(new PermissionData()
-                {
-                    PermissionText = role.Permissions,
-                    RoleName = role.Name
-                });
-                await next(ctx);
-            };
-        }
+        this.next = next;
+        this.dbFactory = dbFactory;
     }
-    public struct PermissionData
+
+    public async Task InvokeAsync(HttpContext ctx)
     {
-        public string PermissionText { get; set; }
-        public string RoleName { get; set; }
+        Role role;
+        using (var _ = TimerGuard.PrintMillis())
+        using (var db = await dbFactory.CreateDbContextAsync())
+        {
+            if (ctx.User.IsAnonymous())
+                role = await db.Roles.FindAsync(1u);
+            else
+                role = await db.Users.Where(x => x.Id == ctx.User.GetUserId()).Select(x => x.Role).FirstAsync();
+        }
+        ctx.Features.Set(new PermissionData()
+        {
+            PermissionText = role.Permissions,
+            RoleName = role.Name
+        });
+        await next.Invoke(ctx);
     }
+}
+
+public struct PermissionData
+{
+    public string PermissionText { get; set; }
+    public string RoleName { get; set; }
 }

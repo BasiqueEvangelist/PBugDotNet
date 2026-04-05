@@ -1,5 +1,3 @@
-using System;
-
 namespace PBug.Authentication;
 
 public static class PermissionParser
