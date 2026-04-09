@@ -8,7 +8,9 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
-
+using OpenTelemetry.Metrics;
+using OpenTelemetry.Resources;
+using OpenTelemetry.Trace;
 using PBug.Authentication;
 using PBug.Data;
 
@@ -25,6 +27,39 @@ public class Startup
 
     public void ConfigureServices(IServiceCollection services)
     {
+        var otel = services.AddOpenTelemetry();
+
+        otel.ConfigureResource(res => res
+            .AddService("PBug"));
+
+        otel.WithMetrics(metrics => metrics
+            .AddAspNetCoreInstrumentation()
+            .AddHttpClientInstrumentation()
+            .AddMeter("Microsoft.AspNetCore.Hosting")
+            .AddMeter("Microsoft.AspNetCore.Server.Kestrel")
+            .AddMeter("System.Net.Http")
+            .AddMeter("System.Net.NameResolution")
+            .AddMeter("MySqlConnector")
+            .AddPrometheusExporter());
+
+        otel.WithTracing(tracing =>
+        {
+            var tracingOtlpEndpoint = Configuration.GetValue<string>("OTLP_ENDPOINT_URL", null);
+
+            tracing.AddAspNetCoreInstrumentation();
+            tracing.AddHttpClientInstrumentation();
+            tracing.AddEntityFrameworkCoreInstrumentation();
+            tracing.AddSource("MySqlConnector");
+
+            if (tracingOtlpEndpoint != null)
+            {
+                tracing.AddOtlpExporter(otlp =>
+                {
+                    otlp.Endpoint = new Uri(tracingOtlpEndpoint);
+                });
+            }
+        });
+        
         var connectionString = Configuration.GetConnectionString("Database"); 
         services.AddDbContextFactory<PBugContext>(opts =>
         {
@@ -103,6 +138,7 @@ public class Startup
         app.UseEndpoints(endpoints =>
         {
             endpoints.MapControllers();
+            endpoints.MapPrometheusScrapingEndpoint();
         });
     }
 }
