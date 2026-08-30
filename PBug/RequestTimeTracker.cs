@@ -6,7 +6,7 @@ namespace PBug;
 public class RequestTimeFeature
 {
     long startTs;
-    public TimeSpan Elapsed => Stopwatch.GetElapsedTime(startTs);
+    public double ElapsedMilliseconds => Stopwatch.GetElapsedTime(startTs).Ticks / TimeSpan.TicksPerMillisecond;
     public RequestTimeFeature(long startTs)
     {
         this.startTs = startTs;
