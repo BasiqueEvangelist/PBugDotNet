@@ -68,8 +68,17 @@ public class Startup
             opts.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString));
         });
 
-        services.AddSingleton<ITicketStore, PBugTicketStore>();
+        var ticketStore = Configuration.GetValue<string>(nameof(AppConfig.TicketStore));
 
+        if (ticketStore == nameof(PBugTicketStore))
+        {
+            services.AddSingleton<ITicketStore, PBugTicketStore>();
+        }
+        else
+        {
+            services.AddSingleton<ITicketStore, MemoryCacheTicketStore>();
+        }
+ 
         services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
             .AddCookie((options) =>
             { 
