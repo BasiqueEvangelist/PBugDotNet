@@ -1,24 +1,32 @@
 using Markdig;
+using Gnezdow.MarkdigTextMate;
+using Markdig.Parsers.Inlines;
 using Microsoft.AspNetCore.Html;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Routing;
+using TextMateSharp.Grammars;
 
 namespace PBug.Utils
 {
-    public static class MarkdownHelper
+    public class MarkdownHelper
     {
-        private static MarkdownPipeline pipeline = makePipeline();
-        public static HtmlString ToHtml(string markdown)
-        {
-            return new HtmlString(Markdown.ToHtml(markdown, pipeline));
-        }
+        private readonly MarkdownPipeline _pipeline;
 
-        private static MarkdownPipeline makePipeline()
+        public MarkdownHelper(IHttpContextAccessor ctxAccessor, LinkGenerator linkGenerator)
         {
             MarkdownPipelineBuilder build = new MarkdownPipelineBuilder()
                 .DisableHtml()
-                .UseTaskLists()
-                .UseEmphasisExtras();
+                .UseAdvancedExtensions()
+                .UseTextMate(new RegistryOptions(ThemeName.LightPlus));
 
-            return build.Build();
+            build.InlineParsers.InsertBefore<LinkInlineParser>(new PBugLinkInlineParser(ctxAccessor, linkGenerator));
+
+            _pipeline = build.Build();
+        }
+        
+        public HtmlString ToHtml(string markdown)
+        {
+            return new HtmlString(Markdown.ToHtml(markdown, _pipeline));
         }
     }
 }

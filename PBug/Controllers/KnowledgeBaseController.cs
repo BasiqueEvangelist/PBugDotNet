@@ -11,9 +11,12 @@ namespace PBug.Controllers
     public class KnowledgeBaseController : Controller
     {
         private readonly PBugContext Db;
-        public KnowledgeBaseController(PBugContext ctx)
+        private readonly MarkdownHelper _markdownHelper;
+
+        public KnowledgeBaseController(PBugContext ctx, MarkdownHelper markdownHelper)
         {
             Db = ctx;
+            _markdownHelper = markdownHelper;
         }
 
         [Route("/kb/")]
@@ -141,7 +144,7 @@ namespace PBug.Controllers
             if (!HttpContext.UserCan("kb.secrecy." + page.Secrecy.ToString()))
                 return Forbid();
 
-            return View(page);
+            return View(new InfopageViewModel() {Infopage = page, MarkdownHelper = _markdownHelper});
         }
 
         [Route("/kb/edit/{*path}")]
@@ -216,7 +219,11 @@ namespace PBug.Controllers
                 .SingleAsync(x => x.Path == path.Replace("%2F", "/", true, CultureInfo.InvariantCulture));
             if (!HttpContext.UserCan("kb.secrecy." + page.Secrecy.ToString()))
                 return Forbid();
-            return View(page);
+            return View(new InfopageViewModel()
+            {
+                Infopage = page,
+                MarkdownHelper = _markdownHelper
+            });
         }
 
         [Route("/kb/activity/{*path}")]

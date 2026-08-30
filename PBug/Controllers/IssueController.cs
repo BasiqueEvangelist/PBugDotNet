@@ -13,10 +13,12 @@ namespace PBug.Controllers
     public class IssueController : Controller
     {
         private readonly PBugContext Db;
+        private readonly MarkdownHelper _markdownHelper;
 
-        public IssueController(PBugContext db)
+        public IssueController(PBugContext db, MarkdownHelper markdownHelper)
         {
             Db = db;
+            _markdownHelper = markdownHelper;
         }
 
         [Route("/")]
@@ -421,7 +423,8 @@ namespace PBug.Controllers
             return View(new IssueViewModel()
             {
                 Issue = i,
-                IsWatching = await Db.IssueWatchers.AnyAsync(x => x.IssueId == i.Id && x.WatcherId == HttpContext.User.GetUserId())
+                IsWatching = await Db.IssueWatchers.AnyAsync(x => x.IssueId == i.Id && x.WatcherId == HttpContext.User.GetUserId()),
+                MarkdownHelper = _markdownHelper
             });
         }
 
@@ -449,7 +452,8 @@ namespace PBug.Controllers
             return View(new IssueViewModel()
             {
                 Issue = i,
-                IsWatching = await Db.IssueWatchers.AnyAsync(x => x.IssueId == i.Id && x.WatcherId == HttpContext.User.GetUserId())
+                IsWatching = await Db.IssueWatchers.AnyAsync(x => x.IssueId == i.Id && x.WatcherId == HttpContext.User.GetUserId()),
+                MarkdownHelper = _markdownHelper
             });
         }
 

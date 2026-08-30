@@ -1,33 +1,33 @@
-@model Infopage
+@model InfopageViewModel
 
-<div class="issue-tag">/@Model.Path</div>
+<div class="issue-tag">/@Model.Infopage.Path</div>
 
-<h2 class="issue-name">@Model.Name</h2>
+<h2 class="issue-name">@Model.Infopage.Name</h2>
 <hr>
 <div class="underpanel">
     @if (Context.UserCan("kb.view"))
     {
-        <a asp-controller="KnowledgeBase" asp-action="ViewPage" asp-route-path="@Model.Path">view</a>
+        <a asp-controller="KnowledgeBase" asp-action="ViewPage" asp-route-path="@Model.Infopage.Path">view</a>
     }
     @if (Context.UserCan("kb.activity"))
     {
-        <a asp-controller="KnowledgeBase" asp-action="ViewActivity" asp-route-path="@Model.Path">activity</a>
+        <a asp-controller="KnowledgeBase" asp-action="ViewActivity" asp-route-path="@Model.Infopage.Path">activity</a>
     }
     @if (Context.UserCan("kb.editpage.all")
-     || (Context.UserCan("kb.editpage.own") && ((int?)Model.AuthorId??-1) == Context.User.GetUserId()))
+     || (Context.UserCan("kb.editpage.own") && ((int?)Model.Infopage.AuthorId??-1) == Context.User.GetUserId()))
     {
-        <a asp-controller="KnowledgeBase" asp-action="EditPage" asp-route-path="@Model.Path">edit</a>
+        <a asp-controller="KnowledgeBase" asp-action="EditPage" asp-route-path="@Model.Infopage.Path">edit</a>
     }
     @if (Context.UserCan("kb.deletepage"))
     {
-        <form asp-controller="KnowledgeBase" asp-action="DeletePage" asp-route-path="@Model.Path" class="linkform">
+        <form asp-controller="KnowledgeBase" asp-action="DeletePage" asp-route-path="@Model.Infopage.Path" class="linkform">
             <input type="submit" value="delete" class="buttonlink">
         </form>
     }
 </div>
 
 <ul class="postlist">
-    @foreach (var comment in @Model.Comments)
+    @foreach (var comment in @Model.Infopage.Comments)
     {
         <li class="entry" id="@comment.Id">
             <div class="entryauthor">@RenderHelpers.ShowUser(comment.Author)</div>
@@ -42,16 +42,16 @@
                 {
                     <a asp-controller="KnowledgeBase" asp-action="EditComment" asp-route-id="@comment.Id">edit</a>
                 }
-                <a asp-controller="KnowledgeBase" asp-action="ViewTalk" asp-route-path="@Model.Path" asp-fragment="@comment.Id">link to comment</a>
+                <a asp-controller="KnowledgeBase" asp-action="ViewTalk" asp-route-path="@Model.Infopage.Path" asp-fragment="@comment.Id">link to comment</a>
             </div>
-            @MarkdownHelper.ToHtml(comment.ContainedText)
+            @Model.MarkdownHelper.ToHtml(comment.ContainedText)
         </li>
     }
 
     @if (Context.UserCan("kb.comment"))
     {
         <li class="entry">
-            <form asp-controller="KnowledgeBase" asp-action="Comment" asp-route-path="@Model.Path" method="POST" enctype="application/x-www-form-urlencoded">
+            <form asp-controller="KnowledgeBase" asp-action="Comment" asp-route-path="@Model.Infopage.Path" method="POST" enctype="application/x-www-form-urlencoded">
                 <div class="entryauthor">
                     @User.GetClaim(ClaimTypes.Name).Value
                     @if (!User.IsAnonymous())

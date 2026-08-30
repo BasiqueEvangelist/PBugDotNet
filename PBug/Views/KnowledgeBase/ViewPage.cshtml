@@ -1,37 +1,37 @@
-@model Infopage
+@model InfopageViewModel
 
-<div class="issue-tag">/@Model.Path</div>
+<div class="issue-tag">/@Model.Infopage.Path</div>
 <div class="issue-tag">
-    <div class="date">Authored by @RenderHelpers.ShowUser(Model.Author) on @DateUtils.StringDate(Model.DateOfCreation)</div>
-    <div class="date">Edited on @DateUtils.StringDate(Model.DateOfEdit)</div>
+    <div class="date">Authored by @RenderHelpers.ShowUser(Model.Infopage.Author) on @DateUtils.StringDate(Model.Infopage.DateOfCreation)</div>
+    <div class="date">Edited on @DateUtils.StringDate(Model.Infopage.DateOfEdit)</div>
 </div>
-<h2 class="issue-name">@Model.Name</h2>
+<h2 class="issue-name">@Model.Infopage.Name</h2>
 <hr>
 <div class="underpanel">
     @if (Context.UserCan("kb.talk"))
     {
-        <a asp-controller="KnowledgeBase" asp-action="ViewTalk" asp-route-path="@Model.Path">talk</a>
+        <a asp-controller="KnowledgeBase" asp-action="ViewTalk" asp-route-path="@Model.Infopage.Path">talk</a>
     }
     @if (Context.UserCan("kb.activity"))
     {
-        <a asp-controller="KnowledgeBase" asp-action="ViewActivity" asp-route-path="@Model.Path">activity</a>
+        <a asp-controller="KnowledgeBase" asp-action="ViewActivity" asp-route-path="@Model.Infopage.Path">activity</a>
     }
     @if (Context.UserCan("kb.editpage.all")
-     || (Context.UserCan("kb.editpage.own") && ((int?)Model.AuthorId??-1)  == Context.User.GetUserId()))
+     || (Context.UserCan("kb.editpage.own") && ((int?)Model.Infopage.AuthorId??-1)  == Context.User.GetUserId()))
     {
-        <a asp-controller="KnowledgeBase" asp-action="EditPage" asp-route-path="@Model.Path">edit</a>
+        <a asp-controller="KnowledgeBase" asp-action="EditPage" asp-route-path="@Model.Infopage.Path">edit</a>
     }
     @if (Context.UserCan("kb.deletepage"))
     {
-        <form asp-controller="KnowledgeBase" asp-action="DeletePage" asp-route-path="@Model.Path" class="linkform">
+        <form asp-controller="KnowledgeBase" asp-action="DeletePage" asp-route-path="@Model.Infopage.Path" class="linkform">
             <input type="submit" value="delete" class="buttonlink">
         </form>
     }
 </div>
 <div class="taglist">
-    @foreach (var tag in Model.Tags.Split(',', StringSplitOptions.RemoveEmptyEntries))
+    @foreach (var tag in Model.Infopage.Tags.Split(',', StringSplitOptions.RemoveEmptyEntries))
     {
         <span class="tag">#@tag</span>
     }
 </div>
-<div class="entry">@MarkdownHelper.ToHtml(Model.ContainedText)</div>
+<div class="entry">@Model.MarkdownHelper.ToHtml(Model.Infopage.ContainedText)</div>

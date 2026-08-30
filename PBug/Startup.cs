@@ -94,6 +94,8 @@ public class Startup
         services.AddSingleton<IAuthorizationHandler, PermissionHandler>();
         services.AddSingleton<IAuthorizationPolicyProvider, PermissionPolicyProvider>();
 
+        services.AddSingleton<MarkdownHelper>();
+
         services.AddControllersWithViews();
     }
 

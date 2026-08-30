@@ -50,7 +50,7 @@
     }
     <br>
 </div>
-<p>@MarkdownHelper.ToHtml(Model.Issue.Description)</p>    
+<p>@Model.MarkdownHelper.ToHtml(Model.Issue.Description)</p>    
 <ul>
     @foreach (var file in Model.Issue.Files)
     {
@@ -77,7 +77,7 @@
                 }
                 <a asp-controller="Issue" asp-action="ViewTalk" asp-route-id="@Model.Issue.Id" asp-fragment="@post.Id">link to post</a>
             </div>
-            @MarkdownHelper.ToHtml(post.ContainedText)
+            @Model.MarkdownHelper.ToHtml(post.ContainedText)
         </li>
     }
     @if (Context.UserCan("issue.post"))
