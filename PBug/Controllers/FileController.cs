@@ -9,10 +9,12 @@ namespace PBug.Controllers
     public class FileController : Controller
     {
         private readonly PBugContext db;
+        private readonly AppConfig cfg;
 
-        public FileController(PBugContext db)
+        public FileController(PBugContext db, IOptions<AppConfig> cfg)
         {
             this.db = db;
+            this.cfg = cfg.Value;
         }
 
         [Route("/file/{uid?}")]
@@ -23,7 +25,7 @@ namespace PBug.Controllers
                 // Something's fishy...
                 return Forbid();
             IssueFile ifi = await db.IssueFiles.SingleAsync(x => x.FileId == uid);
-            return File(System.IO.File.OpenRead(Path.Combine("files", uid)), "application/octet-stream", ifi.FileName);
+            return File(System.IO.File.OpenRead(Path.Combine(cfg.FilesDirectory, uid)), "application/octet-stream", ifi.FileName);
         }
     }
 }

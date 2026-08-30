@@ -14,11 +14,13 @@ namespace PBug.Controllers
     {
         private readonly PBugContext Db;
         private readonly MarkdownHelper _markdownHelper;
+        private readonly AppConfig cfg;
 
-        public IssueController(PBugContext db, MarkdownHelper markdownHelper)
+        public IssueController(PBugContext db, MarkdownHelper markdownHelper, IOptions<AppConfig> cfg)
         {
             Db = db;
             _markdownHelper = markdownHelper;
+            this.cfg = cfg.Value;
         }
 
         [Route("/")]
@@ -401,7 +403,7 @@ namespace PBug.Controllers
 
             foreach ((IssueFile, IFormFile) pack in toProcess)
             {
-                using (FileStream fs = System.IO.File.OpenWrite(Path.Combine("files", pack.Item1.FileId)))
+                using (FileStream fs = System.IO.File.OpenWrite(Path.Combine(cfg.FilesDirectory, pack.Item1.FileId)))
                     await pack.Item2.CopyToAsync(fs);
             }
 
@@ -623,7 +625,7 @@ namespace PBug.Controllers
                         // Something's fishy...
                         return Forbid();
                     Db.Remove(await Db.IssueFiles.FirstAsync(x => x.FileId == uid));
-                    System.IO.File.Delete(Path.Combine("files", uid));
+                    System.IO.File.Delete(Path.Combine(cfg.FilesDirectory, uid));
                 }
 
                 List<(IssueFile, IFormFile)> toProcess = new List<(IssueFile, IFormFile)>();
@@ -646,7 +648,7 @@ namespace PBug.Controllers
 
                 foreach ((IssueFile, IFormFile) pack in toProcess)
                 {
-                    using (FileStream fs = System.IO.File.OpenWrite(Path.Combine("files", pack.Item1.FileId)))
+                    using (FileStream fs = System.IO.File.OpenWrite(Path.Combine(cfg.FilesDirectory, pack.Item1.FileId)))
                         await pack.Item2.CopyToAsync(fs);
                 }
             }

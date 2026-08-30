@@ -41,7 +41,7 @@ Thumbs.db
 **/bin
 files/
 .vscode
-appsettings*
+appsettings.*.json
 launchSettings.json
 systempass.txt
 

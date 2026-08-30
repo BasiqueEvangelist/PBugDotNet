@@ -59,7 +59,9 @@ public class Startup
                 });
             }
         });
-        
+
+        services.AddOptions<AppConfig>().Bind(Configuration);
+
         var connectionString = Configuration.GetConnectionString("Database"); 
         services.AddDbContextFactory<PBugContext>(opts =>
         {
@@ -101,6 +103,10 @@ public class Startup
 
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
     {
+        var cfg = app.ApplicationServices.GetRequiredService<IOptions<AppConfig>>().Value;
+
+        System.IO.Directory.CreateDirectory(cfg.FilesDirectory);
+
         app.Use(RequestTimeFeature.Middleware);
         app.UsePathBase(Configuration.GetValue<string>("PathBase"));
         if (env.IsDevelopment())
